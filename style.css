@@ -1,0 +1,15 @@
+body {
+    background-color: #cfd8dc;
+}
+
+canvas {
+    background-color: #eceff1;
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
