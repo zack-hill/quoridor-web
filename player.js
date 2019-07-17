@@ -24,7 +24,7 @@ class Player {
                 var wallPosition = new Vector(getRandomInt(8), getRandomInt(8));
                 var wallOrientation = getRandomInt(2) + 1;
                 var action = new BlockAction(wallPosition, wallOrientation);
-                if (validateAction(boardState, this.index, action, true)) {
+                if (validateAction(boardState, this.index, action)) {
                     return action;
                 }
             }

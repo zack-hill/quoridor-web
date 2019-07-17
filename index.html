@@ -15,8 +15,20 @@
 </head>
 
 <body onload="onLoad()">
-    <canvas id="board" width=500 height=500></canvas>
-    <button onclick="onButtonClick()">Play</button>
+    <div class="container">
+        <div class="fixed">
+            <canvas id="board" width=500 height=500></canvas>
+        </div>
+        <div class="right-panel">
+            <button onclick="onPlay()">Play</button>
+            <button onclick="onReset()">Reset</button>
+            <fieldset id="turnDelayFieldset">
+                <legend>Turn Delay (ms)</legend>
+                <input type="range" min="0" max="1000" step="50" value="500" id="turnDelaySlider" onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
+                <input type="text" readonly="true" value="500" id="turnDelayValue">
+            </fieldset>
+        </div>
+    </div>
 </body>
 
 </html>
