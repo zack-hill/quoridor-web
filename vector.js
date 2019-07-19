@@ -15,4 +15,8 @@ class Vector {
     toString() {
         return "(" + this.x + ", " + this.y + ")";
     }
+
+    equals(other) {
+        return this.x == other.x && this.y == other.y;
+    }
 }

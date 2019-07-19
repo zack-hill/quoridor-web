@@ -76,9 +76,9 @@ class BoardState {
 
     * getValidMoves(fromPos, oppPos) {
         for (const position of this.getAccessibleAdjacentCells(fromPos)) {
-            if (position === oppPos) {
+            if (position.equals(oppPos)) {
                 for (const jumpPosition of this.getValidMoves(oppPos, oppPos)) {
-                    if (jumpPosition !== fromPos) {
+                    if (!jumpPosition.equals(fromPos)) {
                         yield jumpPosition;
                     }
                 }
@@ -101,7 +101,7 @@ class BoardState {
             cellQueue.push(cell);
         }
         while (cellQueue.length != 0) {
-            var cell = cellQueue.pop();
+            var cell = cellQueue.shift();
             var distance = matrix.getValue(cell.x, cell.y);
             for (var direction of directions) {
                 var adjacentCell = cell.add(direction);
