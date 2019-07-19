@@ -19,15 +19,15 @@ select {
 
 .left-column {    
     margin-left: 15px;
-    margin-right: 15px;
+    margin-right: 0;
     margin-top: 15px;
     margin-bottom: 15px;
     text-align: right;
 }
 
 .right-column {    
-    margin-left: 0px;
-    margin-right: 15px;
+    margin-left: 15px;
+    margin-right: 0;
     margin-top: 15px;
     margin-bottom: 15px;
 }
@@ -111,11 +111,46 @@ select {
     font-size: 20px;
     width: 60px;
     margin: 2px;
-    border-radius: 4px;
+    border-radius: 5px;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     text-align: center;
 }
 
 #nav-buttons {
     text-align: center;
+}
+
+#distance-meter-panel {
+    margin-top: 15px;    
+    padding: 15px;
+    text-align: center;
+}
+
+#distance-meter {
+    width: 100%;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    height: 20px;
+}
+
+#test{
+    border-radius: 5px;
+}
+
+#distance-meter-label-left {
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 20px;
+    display: inline-block;
+    line-height: 20px;
+}
+
+#distance-meter-label-right {
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 20px;
+    display: inline-block;
+    line-height: 20px;
 }

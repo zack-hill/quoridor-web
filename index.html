@@ -21,9 +21,6 @@
 
 <body onload="onLoad()">
     <div class="container">
-        <div class="pure-u-9-24 left-column">
-            <canvas id="board"></canvas>
-        </div>
         <div class="pure-u-7-24 right-column unselectable">
             <div class="panel pure-g" id="top-panel">
                 <div class="pure-g pure-u-1" id="nav-buttons">
@@ -57,8 +54,8 @@
                 <div class="pure-g pure-u-1 pure-form">
                     <fieldset id="turnDelayFieldset">
                         <legend>Turn Delay (ms)</legend>
-                        <input id="turnDelaySlider" class="pure-u-1-2" type="range" min=0 max=1000 step=50 value=500 onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
-                        <input id="turnDelayValue" type="number" value="500" min=0 step=50 onchange="onDelayChange(this.value)">
+                        <input id="turnDelaySlider" class="pure-u-1-2" type="range" min=0 max=1000 step=50 value=250 onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
+                        <input id="turnDelayValue" type="number" value="250" min=0 step=50 onchange="onDelayChange(this.value)">
                     </fieldset>
                 </div>
                 <div class="pure-g pure-u-1 pure-form">
@@ -89,7 +86,17 @@
                         </div>
                     </fieldset>
                 </div>                
-            </div>                       
+            </div>
+        </div>
+        <div class="pure-u-9-24 left-column">
+            <canvas id="board"></canvas>            
+            <div class="panel pure-g" id="distance-meter-panel">
+                <label id="distance-meter-label-left" class="pure-u-1-8"></label>
+                <div id="test" class="pure-u-3-4">
+                    <canvas id="distance-meter"></canvas>
+                </div>
+                <label id="distance-meter-label-right" class="pure-u-1-8"></label>
+            </div> 
         </div>
         <div class="pure-u-6-24 right-column unselectable panel">
             <table class="pure-table pure-table-horizontal" id="turn-table" >

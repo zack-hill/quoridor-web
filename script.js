@@ -1,4 +1,5 @@
 var canvas;
+var distCanvas;
 var turnDelay;
 var game;
 var isPlaying;
@@ -12,6 +13,7 @@ function resizeCanvas() {
 
 function onLoad() {
     canvas = document.getElementById("board");
+    distCanvas = document.getElementById("distance-meter");
     turnDelay = document.getElementById("turnDelayValue").value;
 
 
@@ -94,6 +96,7 @@ function onDelayChange(value) {
 function redraw() {    
     let boardState = game.turns[game.turns.length - 1].boardState;
     draw(boardState);
+    updateDistanceMeter(boardState);
 }
 
 function draw(boardState) {
@@ -167,31 +170,31 @@ function draw(boardState) {
                     ctx.fillText(value, offset.x  + 4, offset.y + cellHeight - 4); 
                 }
             }
-        }
+        }        
     }
     
     // Draw cell borders
     ctx.lineWidth = 1;
     ctx.strokeStyle = "#000000";
     for (var x = 1; x < 9; x++) {
-        drawLine(ctx, cellWidth * x, 0, cellWidth * x, height)
+        drawLine(ctx, Math.floor(cellWidth * x), 0, cellWidth * x, height)
     }
     for (var y = 1; y < 9; y++) {
-        drawLine(ctx, 0, cellHeight * y, width, cellHeight * y)
+        drawLine(ctx, 0, Math.floor(cellHeight * y), width, cellHeight * y)
     }
 
     // Draw player 1
     ctx.fillStyle = "#0000FF";
     var player1Pos = new Vector(
-        boardState.playerPositions[0].x * cellWidth + cellWidth / 4,
-        (8 - boardState.playerPositions[0].y) * cellHeight + cellHeight / 4);
+        Math.floor(boardState.playerPositions[0].x * cellWidth + cellWidth / 4),
+        Math.floor((8 - boardState.playerPositions[0].y) * cellHeight + cellHeight / 4));
     drawRect(ctx, player1Pos.x, player1Pos.y, cellWidth / 2, cellHeight / 2)
     
     // Draw player 2
     ctx.fillStyle = "#FF0000";
     var player2Pos = new Vector(
-        boardState.playerPositions[1].x * cellWidth + cellWidth / 4,
-        (8 - boardState.playerPositions[1].y) * cellHeight + cellHeight / 4);
+        Math.floor(boardState.playerPositions[1].x * cellWidth + cellWidth / 4),
+        Math.floor((8 - boardState.playerPositions[1].y) * cellHeight + cellHeight / 4));
     drawRect(ctx, player2Pos.x, player2Pos.y, cellWidth / 2, cellHeight / 2)
 
     // Draw walls        
@@ -202,8 +205,8 @@ function draw(boardState) {
             if (orientation != 0) {
                 let playerIndex = boardState.playerWalls.getValue(x, y);
                 var center = new Vector(
-                    (x + 1) * cellWidth,
-                    (8 - y) * cellHeight);
+                    Math.floor(((x + 1) * cellWidth)),
+                    Math.floor((8 - y) * cellHeight));
                 if (playerIndex == 0) {
                     ctx.strokeStyle = "#0000FF";
                 } else {
@@ -217,4 +220,28 @@ function draw(boardState) {
             }
         }
     }
+}
+
+function updateDistanceMeter(boardState) {
+    let p1Dist = boardState.getDistanceMatrix(0).getValue(boardState.playerPositions[0].x, boardState.playerPositions[0].y);
+    let p2Dist = boardState.getDistanceMatrix(1).getValue(boardState.playerPositions[1].x, boardState.playerPositions[1].y);
+    let diff = p1Dist - p2Dist;   
+    document.getElementById("distance-meter").value = diff;    
+    document.getElementById("distance-meter-label-left").textContent  = diff;
+    document.getElementById("distance-meter-label-right").textContent  = -diff;
+
+    var ctx = distCanvas.getContext("2d");
+    var grd = ctx.createLinearGradient(0, 0, distCanvas.width, 0);
+    grd.addColorStop(0, "red");
+    grd.addColorStop(0.5, "red");
+    grd.addColorStop(.5, "blue");
+    grd.addColorStop(1, "blue");
+    ctx.fillStyle = grd;
+    drawRect(ctx, 0, 0, distCanvas.width, distCanvas.height)
+    
+    ctx.fillStyle = "#FFFFFF";
+    const sliderRange = 10;
+    const thumbWidth = 10;
+    let x = (-Math.min(Math.max(diff, -sliderRange), sliderRange) + sliderRange) / (sliderRange * 2);
+    drawRect(ctx, Math.floor(x * (distCanvas.width - thumbWidth) - 0), 0, thumbWidth, distCanvas.height)
 }
