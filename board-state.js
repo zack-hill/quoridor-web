@@ -18,12 +18,14 @@ class BoardState {
         this.walls = new Matrix(8, 8, 0);
         this.playerPositions = [new Vector(4, 0), new Vector(4, 8)];
         this.playerWallCounts = [10, 10];
+        this.playerWalls = new Matrix(8, 8, -1);
         this.distanceMatrices = [null, null];
     }
 
     copy() {
         var copy = new BoardState();
         copy.walls = this.walls.copy();
+        copy.playerWalls = this.playerWalls.copy();
         copy.playerPositions = this.playerPositions.slice();
         copy.playerWallCounts = this.playerWallCounts.slice();
         return copy;
@@ -171,9 +173,15 @@ class BoardState {
             for (var x = 0; x < 8; x++) {
                 var orientation = this.walls.getValue(x, y);
                 if (orientation != 0) {
+                    let playerIndex = this.playerWalls.getValue(x, y);
                     var center = new Vector(
                         (x + 1) * cellWidth,
                         (8 - y) * cellHeight);
+                    if (playerIndex == 0) {
+                        ctx.strokeStyle = "#0000FF";
+                    } else {
+                        ctx.strokeStyle = "#FF0000";
+                    }
                     if (orientation == 1) {
                         drawLine(ctx, center.x, center.y - cellHeight, center.x, center.y + cellHeight);
                     } else if (orientation == 2) {

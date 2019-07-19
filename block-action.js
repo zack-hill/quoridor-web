@@ -6,6 +6,7 @@ class BlockAction {
 
     apply(boardState, playerIndex) {
         boardState.walls.setValue(this.position.x, this.position.y, this.orientation);
+        boardState.playerWalls.setValue(this.position.x, this.position.y, playerIndex);
         boardState.playerWallCounts[playerIndex] = boardState.playerWallCounts[playerIndex] - 1;
     }
 
