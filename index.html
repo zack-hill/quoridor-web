@@ -1,7 +1,10 @@
 <html>
 
 <head>
-    <title>Test</title>
+    <title>Quoridor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
     <script type="text/javascript" src="vector.js"></script>
     <script type="text/javascript" src="move-action.js"></script>
@@ -10,23 +13,46 @@
     <script type="text/javascript" src="player.js"></script>
     <script type="text/javascript" src="matrix.js"></script>
     <script type="text/javascript" src="board-state.js"></script>
+    <script type="text/javascript" src="turn.js"></script>
     <script type="text/javascript" src="game.js"></script>
     <script type="text/javascript" src="script.js"></script>
 </head>
 
 <body onload="onLoad()">
-    <div class="container">
-        <div class="fixed">
+    <div class="container pure-g">
+        <div class="pure-u-1-2 left-column">
             <canvas id="board" width=500 height=500></canvas>
         </div>
-        <div class="right-panel">
-            <button onclick="onPlay()">Play</button>
-            <button onclick="onReset()">Reset</button>
-            <fieldset id="turnDelayFieldset">
-                <legend>Turn Delay (ms)</legend>
-                <input type="range" min="0" max="1000" step="50" value="500" id="turnDelaySlider" onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
-                <input type="text" readonly="true" value="500" id="turnDelayValue">
-            </fieldset>
+        <div class="pure-u-1-2 right-column">
+            <div class="panel pure-g" id="top-panel">
+                <div class="pure-g pure-u-1">
+                    <button class="pure-button-primary pure-button" onclick="onPlay()">Play</button>
+                    <button class="pure-button-error pure-button" onclick="onReset()">Reset</button>
+                </div>
+                <div class="pure-g pure-u-1 pure-form">
+                    <fieldset id="turnDelayFieldset">
+                        <legend>Turn Delay (ms)</legend>
+                        <input id="turnDelaySlider" class="pure-button" type="range" min=0 max=1000 step=50 value=500 onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
+                        <input id="turnDelayValue" class="pure-button" type="number" value="500" min=0 step=50 onchange="onDelayChange(this.value)">
+                    </fieldset>
+                </div>               
+            </div>
+            <table class="pure-table pure-table-horizontal panel" id="turn-table" >
+                <colgroup>
+                    <col span="1">
+                    <col span="1">
+                    <col span="1" style="width: 100%;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th></th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="turn-table-body">
+                </tbody>
+            </table> 
         </div>
     </div>
 </body>

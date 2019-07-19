@@ -7,36 +7,43 @@ class Game {
     }
 
     play() {
-        while (!this.takeTurn()) {}
+        while (this.winningPlayerIndex != -1) {
+            this.takeTurn();
+        }
     }
 
     takeTurn() {
         if (this.winningPlayerIndex != -1) {
-            return true;
+            return null;
         }
-        var currentPlayer = this.players[this.currentPlayerIndex];
+        let currentPlayer = this.players[this.currentPlayerIndex];
 
-        var action = currentPlayer.takeAction(this.currentBoard);
-        console.log(action.toString());
+        let action = currentPlayer.takeAction(this.currentBoard);
 
-        var newBoard = this.currentBoard.copy();
+        let newBoard = this.currentBoard.copy();
         action.apply(newBoard, this.currentPlayerIndex);
         this.currentBoard = newBoard;
+
+        let turn = new Turn(newBoard, this.currentPlayerIndex, action);
+        this.turns.push(turn);
 
         if (this.currentBoard.getPlayerDistance(this.currentPlayerIndex) == 0) {
             this.winningPlayerIndex = this.currentPlayerIndex;
         }
 
         this.currentPlayerIndex = 1 - this.currentPlayerIndex;
+
+        return turn;
     }
 
     reset() {
         this.currentBoard = new BoardState();
         this.currentPlayerIndex = 0;
         this.winningPlayerIndex = -1;
+        this.turns = [new Turn(new BoardState(), -1, null)];
     }
 
-    draw(ctx) {
-        this.currentBoard.draw(ctx);
+    draw(canvas) {
+        this.turns[this.turns.length - 1].boardState.draw(canvas);
     }
 }

@@ -21,4 +21,8 @@ class Matrix {
     setValue(x, y, value) {
         this.values[y * this.height + x] = value;
     }
+
+    getMaxValue() {
+        return Math.max.apply(null, this.values);
+    }
 }

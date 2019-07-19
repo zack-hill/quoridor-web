@@ -146,6 +146,7 @@ class BoardState {
 
         // Draw cell borders
         ctx.lineWidth = 1;
+        ctx.strokeStyle = "#000000";
         for (var x = 1; x < 9; x++) {
             drawLine(ctx, cellWidth * x, 0, cellWidth * x, height)
         }

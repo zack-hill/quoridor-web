@@ -1,35 +1,67 @@
-var game;
 var canvas;
-var turnDelaySlider;
+var turnDelay;
+var game;
+
+function resizeCanvas() {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientWidth;
+    game.draw(canvas);
+}
 
 function onLoad() {
     canvas = document.getElementById("board");
-    turnDelaySlider = document.getElementById("turnDelaySlider");
+    turnDelay = document.getElementById("turnDelayValue").value;
+    
+    window.addEventListener("resize", resizeCanvas, false);
 
-    var player1 = new Player();
-    var player2 = new Player();
+    let player1 = new Player();
+    let player2 = new Player();
     game = new Game(player1, player2);
     game.draw(canvas);
 }
 
 function sleep() {
-    return new Promise(resolve => setTimeout(resolve, turnDelaySlider.value));
+    if(turnDelay == 0) {
+        return;
+    }
+    return new Promise(resolve => setTimeout(resolve, turnDelay));
+}
+
+function insertTurnRow(turnNumber, message) {
+    let turnTableBody = document.getElementById("turn-table-body");
+    let row = turnTableBody.insertRow();
+    
+    var div = document.createElement("div");
+    div.className = turnNumber % 2 == 1 ? "player-chip-1" : "player-chip-2";
+
+    row.insertCell(0).innerHTML = turnNumber;
+    row.insertCell(1).appendChild(div);
+    row.insertCell(2).innerHTML = message;
 }
 
 async function onPlay() {
-    while (!game.takeTurn()) {
-        game.draw(canvas);
+    while (game.winningPlayerIndex == -1) {
+        let turn = game.takeTurn();
+
+        insertTurnRow(game.turns.length - 1, turn.action.toString());
+
+        turn.boardState.draw(canvas);
         await sleep();
     }
     console.log("Player " + (game.winningPlayerIndex + 1) + " Wins!");
-    game.draw(canvas);
 }
 
 function onReset() {
     game.reset();
     game.draw(canvas);
+    let turnTableBody = document.getElementById("turn-table-body");
+    while (turnTableBody.hasChildNodes) {
+        turnTableBody.removeChild(turnTableBody.lastChild,);
+    }
 }
 
 function onDelayChange(value) {
+    turnDelay = value;
+    document.getElementById("turnDelaySlider").value = value;
     document.getElementById("turnDelayValue").value = value;
 }

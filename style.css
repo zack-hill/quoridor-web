@@ -1,30 +1,66 @@
 body {
-    background-color: #cfd8dc;
+    background-color: #455A64;
 }
 
-canvas {
-    background-color: #eceff1;
-    width: 500px;
-    height: 500px;
+#board {
+    background-color: #FAFAFA;
+    border-radius: 5px;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 2.5%;
+    margin-top: 5%;
+    margin-bottom: 5%;
 }
 
 .container {
     display: flex;
-    background-color: white;
 }
 
-.fixed {
-    width: 500px;
+#top-panel {
+    padding: 10px;    
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
-.right-panel {
-    flex-grow: 1;
-}
-
-#turnDelayFieldset {
-    float: left;
+.panel {
+    background-color: #FAFAFA;
+    border-radius: 5px;
+    width: 90%;
+    margin-left: 2.5%;
+    margin-right: 5%;
+    margin-top: 5%;
+    margin-bottom: 5%;
 }
 
 #turnDelayValue {
     width: 100px;
+}
+
+#turn-table {
+    margin-top: 15px;
+    background-color: #FAFAFA;
+    border-radius: 5px;
+    border-style: none;
+}
+
+#text-column {
+    width: 100%;
+}
+
+.player-chip-1{
+    width: 20px;
+    height: 20px;
+    background:blue;
+}
+
+.player-chip-2{
+    width: 20px;
+    height: 20px;
+    background:red;
+}
+
+tbody {
+    height: 100px;
+    overflow: scroll;
 }
