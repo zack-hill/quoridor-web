@@ -2,35 +2,43 @@ body {
     background-color: #455A64;
 }
 
+select {
+    margin: 4px;
+    margin-left: 30px;
+}
+
 #board {
     background-color: #FAFAFA;
     border-radius: 5px;
-    width: 90%;
-    margin-left: 5%;
-    margin-right: 2.5%;
-    margin-top: 5%;
-    margin-bottom: 5%;
+    width: 100%;
 }
 
-.container {
-    display: flex;
+.container {    
+    margin: auto;
+}
+
+.left-column {    
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: right;
+}
+
+.right-column {    
+    margin-left: 0px;
+    margin-right: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 #top-panel {
-    padding: 10px;    
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+    padding: 20px;
 }
 
 .panel {
     background-color: #FAFAFA;
     border-radius: 5px;
-    width: 90%;
-    margin-left: 2.5%;
-    margin-right: 5%;
-    margin-top: 5%;
-    margin-bottom: 5%;
 }
 
 .unselectable {
@@ -42,15 +50,20 @@ body {
     user-select: none;
 }
 
+#turnDelaySlider {
+    vertical-align: middle;
+}
+
 #turnDelayValue {
-    width: 100px;
+    width: 75px;
 }
 
 #turn-table {
-    margin-top: 15px;
-    background-color: #FAFAFA;
-    border-radius: 5px;
     border-style: none;
+    border-radius: 5px;
+    display: inline-block;
+    overflow-y: scroll;
+    width: 100%;
 }
 
 #text-column {
@@ -67,11 +80,6 @@ body {
     width: 20px;
     height: 20px;
     background:red;
-}
-
-tbody {
-    height: 100px;
-    overflow: scroll;
 }
 
 .button-success,
@@ -97,4 +105,17 @@ tbody {
 
 .button-secondary {
     background: rgb(66, 184, 221); /* this is a light blue */
+}
+
+.nav-button {
+    font-size: 20px;
+    width: 60px;
+    margin: 2px;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+#nav-buttons {
+    text-align: center;
 }

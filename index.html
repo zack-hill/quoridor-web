@@ -4,6 +4,7 @@
     <title>Quoridor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
     <script type="text/javascript" src="vector.js"></script>
@@ -19,48 +20,79 @@
 </head>
 
 <body onload="onLoad()">
-    <div class="container pure-g">
-        <div class="pure-u-1-2 left-column">
-            <canvas id="board" width=500 height=500></canvas>
+    <div class="container">
+        <div class="pure-u-9-24 left-column">
+            <canvas id="board"></canvas>
         </div>
-        <div class="pure-u-1-2 right-column unselectable">
+        <div class="pure-u-7-24 right-column unselectable">
             <div class="panel pure-g" id="top-panel">
-                <div class="pure-g pure-u-1">
-                    <button id="btn-play" class="pure-button-primary pure-button" onclick="onPlay()">Play</button>
-                    <button id="btn-pause" class="button-warning pure-button" hidden=true onclick="onPause()">Pause</button>
-                    <button class="button-error pure-button" onclick="onReset()">Reset</button>
+                <div class="pure-g pure-u-1" id="nav-buttons">
+                    <button id="btn-play" class="button-success pure-button nav-button" onclick="onPlay()"><i class="fa fa-play"></i></button>
+                    <button id="btn-pause" class="button-warning pure-button nav-button" hidden=true onclick="onPause()"><i class="fa fa-pause"></i></button>
+                    <button id="btn-reset" class="button-error pure-button nav-button" onclick="onReset()"><i class="fa fa-undo"></i></button>
+                </div>
+                <div class="pure-g pure-u-1" id="nav-buttons">
+                    <button id="btn-beginning" class="pure-button nav-button" onclick="onPlay()"><i class="fa fa-fast-backward"></i></button>
+                    <button id="btn-back" class="pure-button nav-button" onclick="onPlay()"><i class="fa fa-backward"></i></button>
+                    <button id="btn-foreword" class="pure-button nav-button" onclick="onPlay()"><i class="fa fa-forward"></i></button>
+                    <button id="btn-end" class="pure-button nav-button" onclick="onPlay()"><i class="fa fa-fast-forward"></i></button>
+                </div>
+                <div class="pure-g pure-u-1 pure-form">
+                    <fieldset id="turnDelayFieldset">
+                        <legend>Players</legend>
+                        <div class="pure-g">
+                            <label class="pure-u-1-5">Player 1</label>
+                            <select id="select-player1" class="pure-u-3-5">
+                                <option value="none">Random</option>
+                            </select> 
+                        </div>
+                        <div class="pure-g">
+                            <label class="pure-u-1-5">Player 2</label>
+                            <select id="select-player2" class="pure-u-3-5">
+                                <option value="none">Random</option>
+                            </select> 
+                        </div>
+                    </fieldset>
                 </div>
                 <div class="pure-g pure-u-1 pure-form">
                     <fieldset id="turnDelayFieldset">
                         <legend>Turn Delay (ms)</legend>
-                        <input id="turnDelaySlider" class="pure-button" type="range" min=0 max=1000 step=50 value=500 onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
-                        <input id="turnDelayValue" class="pure-button" type="number" value="500" min=0 step=50 onchange="onDelayChange(this.value)">
+                        <input id="turnDelaySlider" class="pure-u-1-2" type="range" min=0 max=1000 step=50 value=500 onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
+                        <input id="turnDelayValue" type="number" value="500" min=0 step=50 onchange="onDelayChange(this.value)">
                     </fieldset>
                 </div>
-                <div class="pure-g pure-u-1-2 pure-form">
+                <div class="pure-g pure-u-1 pure-form">
                     <fieldset id="turnDelayFieldset">
-                        <legend>Debug Matrix</legend>
-                        <label for="dm-none" class="pure-radio">
-                            <input id="dm-none" type="radio" name="debugMatrix" checked=true onchange="draw()"> None
-                        </label>
-                        <label for="dm-distance-matrix" class="pure-radio">
-                            <input id="dm-distance-matrix" type="radio" name="debugMatrix" onchange="draw()"> Distance Matrix
-                        </label>
+                        <legend>Matrix Overlay</legend>
+                        <div class="pure-g">
+                            <label class="pure-u-1-5">Mode</label>
+                            <select id="select-matrix-mode" class="pure-u-3-5" onchange="redraw()">
+                                <option value="none">None</option>
+                                <option value="distance">Distance</option>
+                            </select> 
+                        </div>
+                        <div class="pure-g">
+                            <label class="pure-u-1-5">Player</label>                            
+                            <select id="select-matrix-player" class="pure-u-3-5" onchange="redraw()">
+                                <option value="player1">Player 1</option>
+                                <option value="player2">Player 2</option>
+                            </select> 
+                        </div>
+                        <div class="pure-g">
+                            <label class="pure-u-1-5">Text</label>                            
+                            <select id="select-matrix-text" class="pure-u-3-5" onchange="redraw()">
+                                <option value="none">None</option>
+                                <option value="player1">Player 1</option>
+                                <option value="player2">Player 2</option>
+                                <option value="both">Both</option>
+                            </select> 
+                        </div>
                     </fieldset>
-                </div>
-                <div class="pure-g pure-u-1-2 pure-form">
-                    <fieldset id="turnDelayFieldset">
-                        <legend>Debug Matrix Player</legend>
-                        <label for="dmp-player1" class="pure-radio">
-                            <input id="dmp-player1" type="radio" name="debugMatrixPlayer" checked=true onchange="draw()"> Player 1
-                        </label>
-                        <label for="dmp-player2" class="pure-radio">
-                            <input id="dmp-player2" type="radio" name="debugMatrixPlayer" onchange="draw()"> Player 2
-                        </label>
-                    </fieldset>
-                </div>
-            </div>
-            <table class="pure-table pure-table-horizontal panel" id="turn-table" >
+                </div>                
+            </div>                       
+        </div>
+        <div class="pure-u-6-24 right-column unselectable panel">
+            <table class="pure-table pure-table-horizontal" id="turn-table" >
                 <colgroup>
                     <col span="1">
                     <col span="1">
@@ -75,7 +107,7 @@
                 </thead>
                 <tbody id="turn-table-body">
                 </tbody>
-            </table> 
+            </table>
         </div>
     </div>
 </body>
