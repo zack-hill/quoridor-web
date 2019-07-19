@@ -23,11 +23,12 @@
         <div class="pure-u-1-2 left-column">
             <canvas id="board" width=500 height=500></canvas>
         </div>
-        <div class="pure-u-1-2 right-column">
+        <div class="pure-u-1-2 right-column unselectable">
             <div class="panel pure-g" id="top-panel">
                 <div class="pure-g pure-u-1">
-                    <button class="pure-button-primary pure-button" onclick="onPlay()">Play</button>
-                    <button class="pure-button-error pure-button" onclick="onReset()">Reset</button>
+                    <button id="btn-play" class="pure-button-primary pure-button" onclick="onPlay()">Play</button>
+                    <button id="btn-pause" class="button-warning pure-button" hidden=true onclick="onPause()">Pause</button>
+                    <button class="button-error pure-button" onclick="onReset()">Reset</button>
                 </div>
                 <div class="pure-g pure-u-1 pure-form">
                     <fieldset id="turnDelayFieldset">
