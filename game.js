@@ -43,7 +43,7 @@ class Game {
         this.turns = [new Turn(new BoardState(), -1, null)];
     }
 
-    draw(canvas) {
-        this.turns[this.turns.length - 1].boardState.draw(canvas);
+    draw(canvas, showDebugMatrix, debugMatrixPlayerIndex) {
+        this.turns[this.turns.length - 1].boardState.draw(canvas, showDebugMatrix, debugMatrixPlayerIndex);
     }
 }

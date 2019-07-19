@@ -126,7 +126,7 @@ class BoardState {
         return this.getDistanceMatrix(index).getValue(playerPosition.x, playerPosition.y);
     }
 
-    draw(canvas) {
+    draw(canvas, showDebugMatrix, debugMatrixPlayerIndex) {
         var width = canvas.width;
         var height = canvas.height;
         var cellWidth = width / 9;
@@ -138,11 +138,28 @@ class BoardState {
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw outer border
-        ctx.lineWidth = wallWidth * 2;
-        ctx.beginPath();
-        ctx.rect(0, 0, width, height);
-        ctx.stroke();
+        if (showDebugMatrix) {
+            let debugMatrix = this.getDistanceMatrix(debugMatrixPlayerIndex);
+            let maxValue = debugMatrix.getMaxValue();
+            for (let y = 0; y < 9; y++) {
+                for (let x = 0; x < 9; x++) {
+                    let value = debugMatrix.getValue(x, y);
+                    if (value == -1) {
+                        ctx.fillStyle = "#808080";
+                    } 
+                    else if (value == 0) {
+                        ctx.fillStyle = "#00FF00";
+                    }
+                    else {
+                        let scaledColor = Math.floor(230 - value / maxValue * 175);
+                        ctx.fillStyle = "#00" + ("0" +(scaledColor).toString(16)).substr(-2) + "00";
+                    }
+
+                    drawRect(ctx, cellWidth * x, cellHeight * (8 - y), cellWidth, cellHeight)
+                }
+            }
+        }
+        
 
         // Draw cell borders
         ctx.lineWidth = 1;
@@ -160,7 +177,7 @@ class BoardState {
             this.playerPositions[0].x * cellWidth + cellWidth / 4,
             (8 - this.playerPositions[0].y) * cellHeight + cellHeight / 4);
         drawRect(ctx, player1Pos.x, player1Pos.y, cellWidth / 2, cellHeight / 2)
-
+        
         // Draw player 2
         ctx.fillStyle = "#FF0000";
         var player2Pos = new Vector(

@@ -8,6 +8,12 @@ function resizeCanvas() {
     game.draw(canvas);
 }
 
+function draw() {
+    let showDebugMatrix = document.getElementById("dm-distance-matrix").checked;
+    let debugMatrixPlayerIndex = document.getElementById("dmp-player1").checked ? 0 : 1;
+    game.draw(canvas, showDebugMatrix, debugMatrixPlayerIndex);
+}
+
 function onLoad() {
     canvas = document.getElementById("board");
     turnDelay = document.getElementById("turnDelayValue").value;
@@ -17,7 +23,7 @@ function onLoad() {
     let player1 = new Player();
     let player2 = new Player();
     game = new Game(player1, player2);
-    game.draw(canvas);
+    draw()
 }
 
 function sleep() {
@@ -45,7 +51,7 @@ async function onPlay() {
 
         insertTurnRow(game.turns.length - 1, turn.action.toString());
 
-        turn.boardState.draw(canvas);
+        draw()
         await sleep();
     }
     console.log("Player " + (game.winningPlayerIndex + 1) + " Wins!");

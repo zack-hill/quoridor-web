@@ -35,7 +35,29 @@
                         <input id="turnDelaySlider" class="pure-button" type="range" min=0 max=1000 step=50 value=500 onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
                         <input id="turnDelayValue" class="pure-button" type="number" value="500" min=0 step=50 onchange="onDelayChange(this.value)">
                     </fieldset>
-                </div>               
+                </div>
+                <div class="pure-g pure-u-1-2 pure-form">
+                    <fieldset id="turnDelayFieldset">
+                        <legend>Debug Matrix</legend>
+                        <label for="dm-none" class="pure-radio">
+                            <input id="dm-none" type="radio" name="debugMatrix" checked=true onchange="draw()"> None
+                        </label>
+                        <label for="dm-distance-matrix" class="pure-radio">
+                            <input id="dm-distance-matrix" type="radio" name="debugMatrix" onchange="draw()"> Distance Matrix
+                        </label>
+                    </fieldset>
+                </div>
+                <div class="pure-g pure-u-1-2 pure-form">
+                    <fieldset id="turnDelayFieldset">
+                        <legend>Debug Matrix Player</legend>
+                        <label for="dmp-player1" class="pure-radio">
+                            <input id="dmp-player1" type="radio" name="debugMatrixPlayer" checked=true onchange="draw()"> Player 1
+                        </label>
+                        <label for="dmp-player2" class="pure-radio">
+                            <input id="dmp-player2" type="radio" name="debugMatrixPlayer" onchange="draw()"> Player 2
+                        </label>
+                    </fieldset>
+                </div>
             </div>
             <table class="pure-table pure-table-horizontal panel" id="turn-table" >
                 <colgroup>
