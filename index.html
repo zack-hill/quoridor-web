@@ -12,6 +12,8 @@
     <script type="text/javascript" src="block-action.js"></script>
     <script type="text/javascript" src="validation.js"></script>
     <script type="text/javascript" src="player.js"></script>
+    <script type="text/javascript" src="random-player.js"></script>
+    <script type="text/javascript" src="shortest-path-player.js"></script>
     <script type="text/javascript" src="matrix.js"></script>
     <script type="text/javascript" src="board-state.js"></script>
     <script type="text/javascript" src="turn.js"></script>
@@ -39,14 +41,16 @@
                         <legend>Players</legend>
                         <div class="pure-g">
                             <label class="pure-u-1-5">Player 1</label>
-                            <select id="select-player1" class="pure-u-3-5">
-                                <option value="none">Random</option>
+                            <select id="select-player1" class="pure-u-3-5" onchange="setPlayer(this.value, 0)">
+                                <option value="random">Random</option>
+                                <option value="shortest-path">Shortest Path</option>
                             </select> 
                         </div>
                         <div class="pure-g">
                             <label class="pure-u-1-5">Player 2</label>
-                            <select id="select-player2" class="pure-u-3-5">
-                                <option value="none">Random</option>
+                            <select id="select-player2" class="pure-u-3-5" onchange="setPlayer(this.value, 1)">
+                                <option value="random">Random</option>
+                                <option value="shortest-path">Shortest Path</option>
                             </select> 
                         </div>
                     </fieldset>

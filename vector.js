@@ -19,4 +19,8 @@ class Vector {
     equals(other) {
         return this.x == other.x && this.y == other.y;
     }
+
+    getLength() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
 }

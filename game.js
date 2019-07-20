@@ -1,9 +1,12 @@
 class Game {
-    constructor(player1, player2) {
-        this.players = [player1, player2];
-        player1.setIndex(0);
-        player2.setIndex(1);
+    constructor() {
+        this.players = [2];
         this.reset();
+    }
+
+    setPlayer(player, index) {
+        this.players[index] = player;
+        player.setIndex(index);
     }
 
     play() {

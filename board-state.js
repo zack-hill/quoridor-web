@@ -11,7 +11,7 @@ function drawRect(ctx, x, y, w, h) {
     ctx.fill();
 }
 
-var directions = [new Vector(1, 0), new Vector(-1, 0), new Vector(0, 1), new Vector(0, -1)];
+let directions = [new Vector(1, 0), new Vector(-1, 0), new Vector(0, 1), new Vector(0, -1)];
 
 class BoardState {
     constructor() {
@@ -23,7 +23,7 @@ class BoardState {
     }
 
     copy() {
-        var copy = new BoardState();
+        let copy = new BoardState();
         copy.walls = this.walls.copy();
         copy.playerWalls = this.playerWalls.copy();
         copy.playerPositions = this.playerPositions.slice();
@@ -48,7 +48,7 @@ class BoardState {
     }
 
     isPathBlocked(cell, direction) {
-        var orientation = direction.y == 0 ? 1 : 2;
+        const orientation = direction.y == 0 ? 1 : 2;
         for (const point of this.getWallPoints(cell, direction)) {
             if (BoardState.isWallIndexInBounds(point) && this.walls.getValue(point.x, point.y) == orientation) {
                 return true;
@@ -67,7 +67,7 @@ class BoardState {
 
     * getAccessibleAdjacentCells(cell) {
         for (const direction of directions) {
-            var newCell = cell.add(direction);
+            let newCell = cell.add(direction);
             if (BoardState.isCellIndexInBounds(newCell) && !this.isPathBlocked(cell, direction)) {
                 yield newCell;
             }
@@ -93,18 +93,18 @@ class BoardState {
     }
 
     calculateDistanceMatrix(row) {
-        var matrix = new Matrix(9, 9, -1);
-        var cellQueue = [];
-        for (var x = 0; x < 9; x++) {
-            var cell = new Vector(x, row);
+        let matrix = new Matrix(9, 9, -1);
+        let cellQueue = [];
+        for (let x = 0; x < 9; x++) {
+            let cell = new Vector(x, row);
             matrix.setValue(cell.x, cell.y, 0);
             cellQueue.push(cell);
         }
         while (cellQueue.length != 0) {
-            var cell = cellQueue.shift();
-            var distance = matrix.getValue(cell.x, cell.y);
-            for (var direction of directions) {
-                var adjacentCell = cell.add(direction);
+            let cell = cellQueue.shift();
+            let distance = matrix.getValue(cell.x, cell.y);
+            for (const direction of directions) {
+                let adjacentCell = cell.add(direction);
                 if (BoardState.isCellIndexInBounds(adjacentCell) && matrix.getValue(adjacentCell.x, adjacentCell.y) == -1 && !this.isPathBlocked(cell, direction)) {
                     matrix.setValue(adjacentCell.x, adjacentCell.y, distance + 1);
                     cellQueue.push(adjacentCell);
@@ -122,7 +122,7 @@ class BoardState {
     }
 
     getPlayerDistance(index) {
-        var playerPosition = this.playerPositions[index];
+        let playerPosition = this.playerPositions[index];
         return this.getDistanceMatrix(index).getValue(playerPosition.x, playerPosition.y);
     }    
 }

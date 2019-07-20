@@ -16,10 +16,10 @@ function onLoad() {
     distCanvas = document.getElementById("distance-meter");
     turnDelay = document.getElementById("turnDelayValue").value;
 
+    game = new Game();
 
-    let player1 = new Player();
-    let player2 = new Player();
-    game = new Game(player1, player2);
+    setPlayer("shortest-path", 0)
+    setPlayer("shortest-path", 1)
     
     window.addEventListener("resize", resizeCanvas, false);
     resizeCanvas();
@@ -69,6 +69,16 @@ function setIsPlaying(value) {
     }
 }
 
+function setPlayer(value, index) {
+    if (value == "shortest-path") {
+        game.setPlayer(new ShortestPathPlayer(), index)
+        document.getElementById("select-player" + (index + 1)).value = "shortest-path";
+    } else {
+        game.setPlayer(new RandomPlayer(), index);
+        document.getElementById("select-player" + (index + 1)).value = "random";
+    }
+}
+
 function onPlay() {
     setIsPlaying(true);
 }
@@ -82,7 +92,7 @@ function onReset() {
     game.reset();
     redraw();
     let turnTableBody = document.getElementById("turn-table-body");
-    while (turnTableBody.hasChildNodes) {
+    while (turnTableBody.hasChildNodes()) {
         turnTableBody.removeChild(turnTableBody.lastChild);
     }
 }
@@ -230,6 +240,7 @@ function updateDistanceMeter(boardState) {
     document.getElementById("distance-meter-label-left").textContent  = diff;
     document.getElementById("distance-meter-label-right").textContent  = -diff;
 
+    distCanvas.width = distCanvas.clientWidth;
     var ctx = distCanvas.getContext("2d");
     var grd = ctx.createLinearGradient(0, 0, distCanvas.width, 0);
     grd.addColorStop(0, "red");
