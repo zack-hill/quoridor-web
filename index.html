@@ -14,6 +14,7 @@
     <script type="text/javascript" src="player.js"></script>
     <script type="text/javascript" src="random-player.js"></script>
     <script type="text/javascript" src="shortest-path-player.js"></script>
+    <script type="text/javascript" src="minimax-player.js"></script>
     <script type="text/javascript" src="matrix.js"></script>
     <script type="text/javascript" src="board-state.js"></script>
     <script type="text/javascript" src="turn.js"></script>
@@ -26,8 +27,8 @@
         <div class="pure-u-7-24 right-column unselectable">
             <div class="panel pure-g" id="top-panel">
                 <div class="pure-g pure-u-1" id="nav-buttons">
-                    <button id="btn-play" class="button-success pure-button nav-button" onclick="onPlay()"><i class="fa fa-play"></i></button>
-                    <button id="btn-pause" class="button-warning pure-button nav-button" hidden=true onclick="onPause()"><i class="fa fa-pause"></i></button>
+                    <button id="btn-play" class="button-success pure-button nav-button" onclick="setIsPlaying(true)"><i class="fa fa-play"></i></button>
+                    <button id="btn-pause" class="button-warning pure-button nav-button" hidden=true onclick="setIsPlaying(false)"><i class="fa fa-pause"></i></button>
                     <button id="btn-reset" class="button-error pure-button nav-button" onclick="onReset()"><i class="fa fa-undo"></i></button>
                 </div>
                 <div class="pure-g pure-u-1" id="nav-buttons">
@@ -44,6 +45,7 @@
                             <select id="select-player1" class="pure-u-3-5" onchange="setPlayer(this.value, 0)">
                                 <option value="random">Random</option>
                                 <option value="shortest-path">Shortest Path</option>
+                                <option value="minimax">Minimax</option>
                             </select> 
                         </div>
                         <div class="pure-g">
@@ -51,6 +53,7 @@
                             <select id="select-player2" class="pure-u-3-5" onchange="setPlayer(this.value, 1)">
                                 <option value="random">Random</option>
                                 <option value="shortest-path">Shortest Path</option>
+                                <option value="minimax">Minimax</option>
                             </select> 
                         </div>
                     </fieldset>

@@ -3,14 +3,14 @@ function logError(message, action) {
 }
 
 function isValidWall(boardState, position, orientation) {
-    if (boardState.GetWall(position) != 0)
+    if (boardState.walls.getValue(position.x, position.y) != 0)
         return false;
-    var shift_amount = orientation == 1 ? new Vector(0, 1) : new Vector(1, 0);
-    var pointA = position.add(shift_amount);
-    if (BoardState.IsWallIndexInBounds(pointA) && boardState.GetWall(pointA) == orientation)
+    var shiftAmount = orientation == 1 ? new Vector(0, 1) : new Vector(1, 0);
+    var pointA = position.add(shiftAmount);
+    if (BoardState.isWallIndexInBounds(pointA) && boardState.walls.getValue(pointA.x, pointA.y) == orientation)
         return false;
-    var pointB = position - shift_amount;
-    if (BoardState.IsWallIndexInBounds(pointB) && boardState.GetWall(pointB) == orientation)
+    var pointB = position.sub(shiftAmount);
+    if (BoardState.isWallIndexInBounds(pointB) && boardState.walls.getValue(pointB.x, pointB.y) == orientation)
         return false;
     return true;
 }

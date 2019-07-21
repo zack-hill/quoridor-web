@@ -17,8 +17,7 @@ function onLoad() {
     turnDelay = document.getElementById("turnDelayValue").value;
 
     game = new Game();
-
-    setPlayer("shortest-path", 0)
+    setPlayer("minimax", 0)
     setPlayer("shortest-path", 1)
     
     window.addEventListener("resize", resizeCanvas, false);
@@ -70,21 +69,14 @@ function setIsPlaying(value) {
 }
 
 function setPlayer(value, index) {
-    if (value == "shortest-path") {
+    if (value == "minimax") {
+        game.setPlayer(new MinimaxPlayer(3), index)
+    } else if (value == "shortest-path") {
         game.setPlayer(new ShortestPathPlayer(), index)
-        document.getElementById("select-player" + (index + 1)).value = "shortest-path";
     } else {
         game.setPlayer(new RandomPlayer(), index);
-        document.getElementById("select-player" + (index + 1)).value = "random";
     }
-}
-
-function onPlay() {
-    setIsPlaying(true);
-}
-
-function onPause() {
-    setIsPlaying(false);
+    document.getElementById("select-player" + (index + 1)).value = value;
 }
 
 function onReset() {
