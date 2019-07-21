@@ -31,19 +31,15 @@ class BoardState {
         return copy;
     }
 
-    * getWallPoints(cell, direction) {
+    getWallPoints(cell, direction) {
         if (direction.x == 1) {
-            yield new Vector(cell.x, cell.y);
-            yield new Vector(cell.x, cell.y - 1);
+            return [new Vector(cell.x, cell.y), new Vector(cell.x, cell.y - 1)];
         } else if (direction.x == -1) {
-            yield new Vector(cell.x - 1, cell.y - 1);
-            yield new Vector(cell.x - 1, cell.y);
+            return [new Vector(cell.x - 1, cell.y - 1), new Vector(cell.x - 1, cell.y)];
         } else if (direction.y == 1) {
-            yield new Vector(cell.x, cell.y);
-            yield new Vector(cell.x - 1, cell.y);
+            return [new Vector(cell.x, cell.y), new Vector(cell.x - 1, cell.y)];
         } else if (direction.y == -1) {
-            yield new Vector(cell.x - 1, cell.y - 1);
-            yield new Vector(cell.x, cell.y - 1);
+            return [new Vector(cell.x - 1, cell.y - 1), new Vector(cell.x, cell.y - 1)];
         }
     }
 
