@@ -32,10 +32,10 @@
                     <button id="btn-reset" class="button-error pure-button nav-button" onclick="onReset()"><i class="fa fa-undo"></i></button>
                 </div>
                 <div class="pure-g pure-u-1" id="nav-buttons">
-                    <button id="btn-beginning" class="pure-button nav-button" onclick="onPlay()"><i class="fa fa-fast-backward"></i></button>
-                    <button id="btn-back" class="pure-button nav-button" onclick="onPlay()"><i class="fa fa-backward"></i></button>
-                    <button id="btn-foreword" class="pure-button nav-button" onclick="onPlay()"><i class="fa fa-forward"></i></button>
-                    <button id="btn-end" class="pure-button nav-button" onclick="onPlay()"><i class="fa fa-fast-forward"></i></button>
+                    <button id="btn-beginning" class="pure-button nav-button" onclick="onJumpToBeginning()"><i class="fa fa-fast-backward"></i></button>
+                    <button id="btn-back" class="pure-button nav-button" onclick="onBack()"><i class="fa fa-backward"></i></button>
+                    <button id="btn-foreword" class="pure-button nav-button" onclick="onForward()"><i class="fa fa-forward"></i></button>
+                    <button id="btn-end" class="pure-button nav-button" onclick="onJumpToEnd()"><i class="fa fa-fast-forward"></i></button>
                 </div>
                 <div class="pure-g pure-u-1 pure-form">
                     <fieldset id="turnDelayFieldset">
@@ -106,19 +106,13 @@
             </div> 
         </div>
         <div class="pure-u-6-24 right-column unselectable panel">
+            <div class="table-header">Turns</div>
             <table class="pure-table pure-table-horizontal" id="turn-table" >
                 <colgroup>
                     <col span="1">
                     <col span="1">
                     <col span="1" style="width: 100%;">
                 </colgroup>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th></th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
                 <tbody id="turn-table-body">
                 </tbody>
             </table>

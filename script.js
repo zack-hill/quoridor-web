@@ -4,6 +4,8 @@ var turnDelay;
 var game;
 var isPlaying;
 var cancelToken = new Object();
+var currentTurnNumber = 0;
+var turnRows = [];
 
 function resizeCanvas() {
     canvas.width = canvas.clientWidth;
@@ -17,30 +19,102 @@ function onLoad() {
     turnDelay = document.getElementById("turnDelayValue").value;
 
     game = new Game();
-    setPlayer("minimax", 0)
+    setPlayer("shortest-path", 0)
     setPlayer("shortest-path", 1)
-    
+
     window.addEventListener("resize", resizeCanvas, false);
     resizeCanvas();
+
+    onReset();
+}
+
+function setTurnNumber(turnNumber) {
+    currentTurnNumber = turnNumber;
+    if (currentTurnNumber == 0) {
+        document.getElementById("btn-beginning").classList.add("pure-button-disabled");
+        document.getElementById("btn-back").classList.add("pure-button-disabled");
+    } else {
+        document.getElementById("btn-beginning").classList.remove("pure-button-disabled");
+        document.getElementById("btn-back").classList.remove("pure-button-disabled");
+    }
+    if (currentTurnNumber == game.turns.length - 1) {
+        if (game.winningPlayerIndex != -1) {
+            document.getElementById("btn-foreword").classList.add("pure-button-disabled");
+        }
+        document.getElementById("btn-end").classList.add("pure-button-disabled");
+    } else {
+        document.getElementById("btn-end").classList.remove("pure-button-disabled");
+        document.getElementById("btn-foreword").classList.remove("pure-button-disabled");
+    }
+    for(let row of turnRows) {
+        row.classList.remove("selected");
+    }
+    turnRows[turnNumber].classList.add("selected");
+    turnRows[turnNumber].scrollIntoView({ block: 'nearest', inline: 'start' });
+}
+
+function onJumpToTurn(turnNumber) {
+    setIsPlaying(false);
+
+    setTurnNumber(turnNumber);
+
+    redraw();
+}
+
+function onJumpToBeginning() {
+    onJumpToTurn(0);
+}
+
+function onJumpToEnd() {
+    onJumpToTurn(game.turns.length - 1);
+}
+
+function onBack() {
+    if (currentTurnNumber == 0) {
+        return;
+    }
+    onJumpToTurn(currentTurnNumber - 1);
+}
+
+function onForward() {
+    if (currentTurnNumber == game.turns.length - 1) {
+        if (game.winningPlayerIndex != -1) {
+            return;
+        } else {
+            game.takeTurn();
+        }
+    }
+    onJumpToTurn(currentTurnNumber + 1);
 }
 
 function insertTurnRow(turnNumber, message) {
     let turnTableBody = document.getElementById("turn-table-body");
     let row = turnTableBody.insertRow();
+    row.onclick = function () { onJumpToTurn(turnNumber); };
 
-    var div = document.createElement("div");
-    div.className = turnNumber % 2 == 1 ? "player-chip-1" : "player-chip-2";
+    if (turnNumber == 0) {
+        row.insertCell(0);
+        row.insertCell(1);
+        row.insertCell(2).innerHTML = message;
+    } else {
+        var div = document.createElement("div");
+        div.className = turnNumber % 2 == 1 ? "player-chip-1" : "player-chip-2";
+        row.insertCell(0).innerHTML = turnNumber;
+        row.insertCell(1).appendChild(div);
+        row.insertCell(2).innerHTML = message;
+    }
 
-    row.insertCell(0).innerHTML = turnNumber;
-    row.insertCell(1).appendChild(div);
-    row.insertCell(2).innerHTML = message;
+    turnRows.push(row);
 }
 
 async function gameLoop(cancelToken) {
-    while (game.winningPlayerIndex == -1) {
-        let turn = game.takeTurn();
+    while (!(currentTurnNumber == game.turns.length - 1 && game.winningPlayerIndex != -1)) {
+        if (currentTurnNumber == game.turns.length - 1) {
+            let turn = game.takeTurn();
+            insertTurnRow(currentTurnNumber + 1, turn.action.toString());
+        }
 
-        insertTurnRow(game.turns.length - 1, turn.action.toString());
+        setTurnNumber(currentTurnNumber + 1);
 
         redraw()
 
@@ -52,7 +126,6 @@ async function gameLoop(cancelToken) {
         }
     }
     setIsPlaying(false);
-    console.log("Player " + (game.winningPlayerIndex + 1) + " Wins!");
 }
 
 function setIsPlaying(value) {
@@ -81,12 +154,18 @@ function setPlayer(value, index) {
 
 function onReset() {
     setIsPlaying(false);
-    game.reset();
-    redraw();
+
+    // Reset turn information
+    turnRows = [];
     let turnTableBody = document.getElementById("turn-table-body");
     while (turnTableBody.hasChildNodes()) {
         turnTableBody.removeChild(turnTableBody.lastChild);
     }
+    insertTurnRow(0, "Start");
+    setTurnNumber(0);
+
+    game.reset();
+    redraw();    
 }
 
 function onDelayChange(value) {
@@ -95,8 +174,8 @@ function onDelayChange(value) {
     document.getElementById("turnDelayValue").value = value;
 }
 
-function redraw() {    
-    let boardState = game.turns[game.turns.length - 1].boardState;
+function redraw() {
+    let boardState = game.turns[currentTurnNumber].boardState;
     draw(boardState);
     updateDistanceMeter(boardState);
 }
@@ -132,13 +211,13 @@ function draw(boardState) {
                 let value = debugMatrix.getValue(x, y);
                 if (value == -1) {
                     ctx.fillStyle = "#808080";
-                } 
+                }
                 else if (value == 0) {
                     ctx.fillStyle = "#00FF00";
                 }
                 else {
                     let scaledColor = Math.floor(230 - value / maxValue * 175);
-                    ctx.fillStyle = "#00" + ("0" +(scaledColor).toString(16)).substr(-2) + "00";
+                    ctx.fillStyle = "#00" + ("0" + (scaledColor).toString(16)).substr(-2) + "00";
                 }
 
                 let offset = new Vector(cellWidth * x, cellHeight * (8 - y));
@@ -149,7 +228,7 @@ function draw(boardState) {
 
         const black = "#000000";
         const gray = "#757575";
-        
+
         if (showPlayer1Text) {
             ctx.fillStyle = debugMatrixPlayerIndex == 0 ? black : gray;
             let fontSize = Math.floor(cellHeight / 4);
@@ -158,10 +237,10 @@ function draw(boardState) {
                 for (let x = 0; x < 9; x++) {
                     let value = debugMatrixP1.getValue(x, y);
                     let offset = new Vector(cellWidth * x, cellHeight * (8 - y));
-                    ctx.fillText(value, offset.x + 4, offset.y + fontSize); 
+                    ctx.fillText(value, offset.x + 4, offset.y + fontSize);
                 }
             }
-        }        
+        }
 
         if (showPlayer2Text) {
             ctx.fillStyle = debugMatrixPlayerIndex == 1 ? black : gray;
@@ -169,12 +248,12 @@ function draw(boardState) {
                 for (let x = 0; x < 9; x++) {
                     let value = debugMatrixP2.getValue(x, y);
                     let offset = new Vector(cellWidth * x, cellHeight * (8 - y));
-                    ctx.fillText(value, offset.x  + 4, offset.y + cellHeight - 4); 
+                    ctx.fillText(value, offset.x + 4, offset.y + cellHeight - 4);
                 }
             }
-        }        
+        }
     }
-    
+
     // Draw cell borders
     ctx.lineWidth = 1;
     ctx.strokeStyle = "#000000";
@@ -191,7 +270,7 @@ function draw(boardState) {
         Math.floor(boardState.playerPositions[0].x * cellWidth + cellWidth / 4),
         Math.floor((8 - boardState.playerPositions[0].y) * cellHeight + cellHeight / 4));
     drawRect(ctx, player1Pos.x, player1Pos.y, cellWidth / 2, cellHeight / 2)
-    
+
     // Draw player 2
     ctx.fillStyle = "#FF0000";
     var player2Pos = new Vector(
@@ -227,10 +306,10 @@ function draw(boardState) {
 function updateDistanceMeter(boardState) {
     let p1Dist = boardState.getDistanceMatrix(0).getValue(boardState.playerPositions[0].x, boardState.playerPositions[0].y);
     let p2Dist = boardState.getDistanceMatrix(1).getValue(boardState.playerPositions[1].x, boardState.playerPositions[1].y);
-    let diff = p1Dist - p2Dist;   
-    document.getElementById("distance-meter").value = diff;    
-    document.getElementById("distance-meter-label-left").textContent  = diff;
-    document.getElementById("distance-meter-label-right").textContent  = -diff;
+    let diff = p1Dist - p2Dist;
+    document.getElementById("distance-meter").value = diff;
+    document.getElementById("distance-meter-label-left").textContent = diff;
+    document.getElementById("distance-meter-label-right").textContent = -diff;
 
     distCanvas.width = distCanvas.clientWidth;
     var ctx = distCanvas.getContext("2d");
@@ -241,7 +320,7 @@ function updateDistanceMeter(boardState) {
     grd.addColorStop(1, "blue");
     ctx.fillStyle = grd;
     drawRect(ctx, 0, 0, distCanvas.width, distCanvas.height)
-    
+
     ctx.fillStyle = "#FFFFFF";
     const sliderRange = 10;
     const thumbWidth = 10;
