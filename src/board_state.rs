@@ -22,7 +22,7 @@ impl BoardState {
     pub fn new() -> BoardState {
         BoardState {
             walls: [[WallOrientation::None; 8]; 8],
-            player_positions: [Vector2::new(0, 0); 2],
+            player_positions: [Vector2::new(4, 0), Vector2::new(4, 8)],
             player_wall_counts: [10; 2],
             distance_matrices: [None; 2],
         }
@@ -99,7 +99,7 @@ impl BoardState {
         return self.distance_matrices[player_index].unwrap();
     }
 
-    pub fn calculate_distance_matrix(&mut self, row: usize) -> [[isize; 9]; 9] {
+    fn calculate_distance_matrix(&mut self, row: usize) -> [[isize; 9]; 9] {
         let mut matrix = [[-1; 9]; 9];
         let mut queue: VecDeque<Vector2<isize>> = VecDeque::new();
         for x in 0..9 {
@@ -124,3 +124,133 @@ impl BoardState {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn set_wall() {
+        let expected = WallOrientation::Vertical;
+        let pos = Vector2::new(3, 5);
+        let mut board_state = BoardState::new();
+        board_state.set_wall(pos, expected);
+
+        assert_eq!(expected, board_state.get_wall(pos));
+    }
+    
+    #[test]
+    fn set_player_position() {
+        let expected = Vector2::new(5, 1);
+        let mut board_state = BoardState::new();
+        board_state.set_player_position(1, expected);
+
+        assert_eq!(expected, board_state.get_player_position(1));
+    }
+    
+    #[test]
+    fn is_cell_occupied() {
+        let player_position = Vector2::new(5, 1);
+        let mut board_state = BoardState::new();
+        board_state.set_player_position(1, player_position);
+
+        assert_eq!(true, board_state.is_cell_occupied(player_position));
+        assert_eq!(false, board_state.is_cell_occupied(Vector2::new(5, 2)));
+    }
+
+    #[test]
+    fn is_path_blocked_no_walls() {
+        let board_state = BoardState::new();
+
+        assert_eq!(false, board_state.is_path_blocked(Vector2::new(5, 5), Vector2::new(0, 1)));
+        assert_eq!(false, board_state.is_path_blocked(Vector2::new(5, 5), Vector2::new(1, 0)));
+    }
+    
+    #[test]
+    fn is_path_blocked_horizontal() {
+        let mut board_state = BoardState::new();
+        board_state.set_wall(Vector2::new(5, 5), WallOrientation::Horizontal);
+
+        assert_eq!(false, board_state.is_path_blocked(Vector2::new(4, 5), Vector2::new(0, 1)));
+        assert_eq!(true, board_state.is_path_blocked(Vector2::new(5, 5), Vector2::new(0, 1)));
+        assert_eq!(true, board_state.is_path_blocked(Vector2::new(6, 5), Vector2::new(0, 1)));
+        assert_eq!(false, board_state.is_path_blocked(Vector2::new(7, 5), Vector2::new(0, 1)));
+    }
+    
+    #[test]
+    fn is_path_blocked_vertical() {
+        let mut board_state = BoardState::new();
+        board_state.set_wall(Vector2::new(5, 5), WallOrientation::Vertical);
+
+        assert_eq!(false, board_state.is_path_blocked(Vector2::new(5, 4), Vector2::new(1, 0)));
+        assert_eq!(true, board_state.is_path_blocked(Vector2::new(5, 5), Vector2::new(1, 0)));
+        assert_eq!(true, board_state.is_path_blocked(Vector2::new(5, 6), Vector2::new(1, 0)));
+        assert_eq!(false, board_state.is_path_blocked(Vector2::new(5, 7), Vector2::new(1, 0)));
+    }
+
+    #[test]
+    fn is_wall_index_in_bounds() {
+        assert_eq!(true, BoardState::is_wall_index_in_bounds(Vector2::new(5, 1)));
+        assert_eq!(true, BoardState::is_wall_index_in_bounds(Vector2::new(1, 5)));
+        assert_eq!(false, BoardState::is_wall_index_in_bounds(Vector2::new(-1, 4)));
+        assert_eq!(false, BoardState::is_wall_index_in_bounds(Vector2::new(8, 4)));
+        assert_eq!(false, BoardState::is_wall_index_in_bounds(Vector2::new(4, -1)));
+        assert_eq!(false, BoardState::is_wall_index_in_bounds(Vector2::new(4, 8)));
+    }
+
+    #[test]
+    fn is_cell_index_in_bounds() {
+        assert_eq!(true, BoardState::is_cell_index_in_bounds(Vector2::new(1, 5)));
+        assert_eq!(true, BoardState::is_cell_index_in_bounds(Vector2::new(1, 5)));
+        assert_eq!(false, BoardState::is_cell_index_in_bounds(Vector2::new(-1, 4)));
+        assert_eq!(false, BoardState::is_cell_index_in_bounds(Vector2::new(9, 4)));
+        assert_eq!(false, BoardState::is_cell_index_in_bounds(Vector2::new(4, -1)));
+        assert_eq!(false, BoardState::is_cell_index_in_bounds(Vector2::new(4, 9)));
+    }
+
+    #[test]
+    fn get_player_distance() {
+        let mut board_state = BoardState::new();
+        board_state.set_wall(Vector2::new(5, 5), WallOrientation::Horizontal);
+        board_state.set_player_position(0, Vector2::new(5, 5));
+        
+        assert_eq!(4, board_state.get_player_distance(0));
+    }
+
+    #[test]
+    fn get_distance_matrix_player_1() {
+        let mut board_state = BoardState::new();
+        board_state.set_wall(Vector2::new(0, 0), WallOrientation::Horizontal);
+        board_state.set_wall(Vector2::new(2, 0), WallOrientation::Horizontal);
+        board_state.set_wall(Vector2::new(4, 0), WallOrientation::Horizontal);
+        board_state.set_wall(Vector2::new(5, 1), WallOrientation::Vertical);
+        board_state.set_wall(Vector2::new(4, 2), WallOrientation::Horizontal);
+        board_state.set_wall(Vector2::new(1, 1), WallOrientation::Vertical);
+        board_state.set_wall(Vector2::new(0, 2), WallOrientation::Horizontal);
+
+        let matrix = board_state.get_distance_matrix(0);
+
+        assert_eq!(0, matrix[4][8]);
+        assert_eq!(10, matrix[4][0]);
+        assert_eq!(8, matrix[4][1]);
+        assert_eq!(-1, matrix[1][1]);
+    }
+
+    #[test]
+    fn get_distance_matrix_player_2() {
+        let mut board_state = BoardState::new();
+        board_state.set_wall(Vector2::new(0, 0), WallOrientation::Horizontal);
+        board_state.set_wall(Vector2::new(2, 0), WallOrientation::Horizontal);
+        board_state.set_wall(Vector2::new(4, 0), WallOrientation::Horizontal);
+        board_state.set_wall(Vector2::new(5, 1), WallOrientation::Vertical);
+        board_state.set_wall(Vector2::new(4, 2), WallOrientation::Horizontal);
+        board_state.set_wall(Vector2::new(1, 1), WallOrientation::Vertical);
+        board_state.set_wall(Vector2::new(0, 2), WallOrientation::Horizontal);
+
+        let matrix = board_state.get_distance_matrix(1);
+
+        assert_eq!(0, matrix[4][0]);
+        assert_eq!(10, matrix[4][8]);
+        assert_eq!(9, matrix[4][1]);
+        assert_eq!(-1, matrix[1][1]);
+    }
+}
