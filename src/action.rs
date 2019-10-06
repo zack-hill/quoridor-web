@@ -1,23 +1,23 @@
 use crate::action_type::ActionType;
+use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
-use nalgebra::Point2;
 use std::fmt;
 
 pub struct Action {
     pub action_type: ActionType,
-    pub position: Point2<i8>,
+    pub position: Vector2<usize>,
     pub orientation: WallOrientation,
 }
 
 impl Action {
-    pub fn create_move(position: Point2<i8>) -> Action {
+    pub fn create_move(position: Vector2<usize>) -> Action {
         Action {
             action_type: ActionType::Move,
             position,
             orientation: WallOrientation::None,
         }
     }
-    pub fn create_block(position: Point2<i8>, orientation: WallOrientation) -> Action {
+    pub fn create_block(position: Vector2<usize>, orientation: WallOrientation) -> Action {
         Action {
             action_type: ActionType::Block,
             position,
