@@ -32,3 +32,30 @@ impl<T: Add<Output = T>> Add for Vector2<T> {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn add() {
+        let a = Vector2::new(2, 7);
+        let b = Vector2::new(4, 1);
+
+        let result = a + b;
+
+        assert_eq!(6, result.x);
+        assert_eq!(8, result.y);
+    }
+
+    #[test]
+    fn equals() {
+        assert_eq!(Vector2::new(5, 1), Vector2::new(5, 1));
+    }
+
+    #[test]
+    fn not_equals() {
+        assert_ne!(Vector2::new(1, 1), Vector2::new(1, 2));
+        assert_ne!(Vector2::new(1, 1), Vector2::new(2, 1));
+        assert_ne!(Vector2::new(1, 1), Vector2::new(2, 2));
+    }
+}
