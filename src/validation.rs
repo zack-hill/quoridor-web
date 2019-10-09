@@ -4,7 +4,7 @@ use crate::board_state::{BoardState, DIRECTIONS};
 use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
-pub fn validate_action(board_state: BoardState, player_index: usize, action: Action) -> bool {
+pub fn validate_action(board_state: BoardState, player_index: usize, action: &Action) -> bool {
     if action.action_type == ActionType::Move {
         // Check if move is to a valid location
         if !get_valid_player_moves(board_state, player_index).contains(&action.position) {
@@ -164,7 +164,7 @@ mod tests {
         let board_state = BoardState::new();
         let action = Action::create_move(Vector2::new(6, 0));
 
-        assert_eq!(false, validate_action(board_state, 0, action));
+        assert_eq!(false, validate_action(board_state, 0, &action));
     }
 
     #[test]
@@ -173,7 +173,7 @@ mod tests {
         board_state.set_player_wall_count(0, 0);
         let action = Action::create_block(Vector2::new(0, 0), WallOrientation::Horizontal);
 
-        assert_eq!(false, validate_action(board_state, 0, action));
+        assert_eq!(false, validate_action(board_state, 0, &action));
     }
 
     #[test]
@@ -181,7 +181,7 @@ mod tests {
         let board_state = BoardState::new();
         let action = Action::create_block(Vector2::new(-1, 0), WallOrientation::Horizontal);
 
-        assert_eq!(false, validate_action(board_state, 0, action));
+        assert_eq!(false, validate_action(board_state, 0, &action));
     }
 
     #[test]
@@ -190,7 +190,7 @@ mod tests {
         board_state.set_wall(Vector2::new(3, 7), WallOrientation::Horizontal);
         let action = Action::create_block(Vector2::new(3, 7), WallOrientation::Horizontal);
 
-        assert_eq!(false, validate_action(board_state, 0, action));
+        assert_eq!(false, validate_action(board_state, 0, &action));
     }
 
     #[test]
@@ -199,7 +199,7 @@ mod tests {
         board_state.set_wall(Vector2::new(4, 7), WallOrientation::Horizontal);
         let action = Action::create_block(Vector2::new(3, 7), WallOrientation::Horizontal);
 
-        assert_eq!(false, validate_action(board_state, 0, action));
+        assert_eq!(false, validate_action(board_state, 0, &action));
     }
 
     #[test]
@@ -209,7 +209,7 @@ mod tests {
         board_state.set_wall(Vector2::new(2, 0), WallOrientation::Vertical);
         let action = Action::create_block(Vector2::new(4, 0), WallOrientation::Vertical);
 
-        assert_eq!(false, validate_action(board_state, 0, action));
+        assert_eq!(false, validate_action(board_state, 0, &action));
     }
 
     #[test]
@@ -219,7 +219,7 @@ mod tests {
         board_state.set_wall(Vector2::new(2, 7), WallOrientation::Vertical);
         let action = Action::create_block(Vector2::new(4, 7), WallOrientation::Vertical);
 
-        assert_eq!(false, validate_action(board_state, 0, action));
+        assert_eq!(false, validate_action(board_state, 0, &action));
     }
 
     #[test]
