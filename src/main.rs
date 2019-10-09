@@ -3,6 +3,7 @@ mod action_type;
 mod board_state;
 mod vector2;
 mod wall_orientation;
+mod validation;
 
 use action::Action;
 use board_state::BoardState;

@@ -1,5 +1,5 @@
 use std::fmt::{Display, Formatter, Result};
-use std::ops::Add;
+use std::ops::{Add, Sub};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Vector2<T> {
@@ -32,6 +32,16 @@ impl<T: Add<Output = T>> Add for Vector2<T> {
     }
 }
 
+impl<T: Sub<Output = T>> Sub for Vector2<T> {
+    type Output = Vector2<T>;
+    fn sub(self, rhs: Vector2<T>) -> Vector2<T> {
+        return Vector2 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y
+        };
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -45,6 +55,17 @@ mod tests {
 
         assert_eq!(6, result.x);
         assert_eq!(8, result.y);
+    }
+
+    #[test]
+    fn sub() {
+        let a = Vector2::new(2, 7);
+        let b = Vector2::new(4, 1);
+
+        let result = a - b;
+
+        assert_eq!(-2, result.x);
+        assert_eq!(6, result.y);
     }
 
     #[test]

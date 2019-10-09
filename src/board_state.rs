@@ -3,7 +3,7 @@ use crate::wall_orientation::WallOrientation;
 use std::collections::VecDeque;
 
 lazy_static! {
-    static ref DIRECTIONS: [Vector2<isize>; 4] = [
+    pub static ref DIRECTIONS: [Vector2<isize>; 4] = [
         Vector2::new(1, 0),
         Vector2::new(-1, 0),
         Vector2::new(0, 1),
@@ -11,9 +11,10 @@ lazy_static! {
     ];
 }
 
+#[derive(Copy, Clone)]
 pub struct BoardState {
     pub walls: [[WallOrientation; 8]; 8],
-    pub player_positions: [Vector2<usize>; 2],
+    pub player_positions: [Vector2<isize>; 2],
     pub player_wall_counts: [usize; 2],
     pub distance_matrices: [Option<[[isize; 9]; 9]>; 2],
 }
@@ -38,15 +39,23 @@ impl BoardState {
         self.distance_matrices[1] = None;
     }
 
-    pub fn get_player_position(&self, player_index: usize) -> Vector2<usize> {
+    pub fn get_player_position(&self, player_index: usize) -> Vector2<isize> {
         return self.player_positions[player_index];
     }
 
-    pub fn set_player_position(&mut self, player_index: usize, position: Vector2<usize>) {
+    pub fn set_player_position(&mut self, player_index: usize, position: Vector2<isize>) {
         self.player_positions[player_index] = position;
     }
 
-    pub fn is_cell_occupied(&self, position: Vector2<usize>) -> bool {
+    pub fn get_player_wall_count(&self, player_index: usize) -> usize {
+        return self.player_wall_counts[player_index];
+    }
+
+    pub fn set_player_wall_count(&mut self, player_index: usize, value: usize) {
+        self.player_wall_counts[player_index] = value;
+    }
+
+    pub fn is_cell_occupied(&self, position: Vector2<isize>) -> bool {
         return self.player_positions[0] == position || self.player_positions[1] == position;
     }
 
@@ -89,7 +98,7 @@ impl BoardState {
 
     pub fn get_player_distance(&mut self, player_index: usize) -> isize {
         let player_position = self.get_player_position(player_index);
-        return self.get_distance_matrix(player_index)[player_position.x][player_position.y];
+        return self.get_distance_matrix(player_index)[player_position.x as usize][player_position.y as usize];
     }
 
     pub fn get_distance_matrix(&mut self, player_index: usize) -> [[isize; 9]; 9] {
