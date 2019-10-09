@@ -4,7 +4,7 @@ use crate::board_state::{BoardState, DIRECTIONS};
 use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
-pub fn validate_action(board_state: BoardState, player_index: usize, action: &Action) -> bool {
+pub fn validate_action(board_state: &BoardState, player_index: usize, action: &Action) -> bool {
     if action.action_type == ActionType::Move {
         // Check if move is to a valid location
         if !get_valid_player_moves(board_state, player_index).contains(&action.position) {
@@ -16,57 +16,44 @@ pub fn validate_action(board_state: BoardState, player_index: usize, action: &Ac
         if board_state.get_player_wall_count(player_index) == 0 {
             return false;
         }
+
         // Wall is within bounds
         if !BoardState::is_wall_index_in_bounds(action.position) {
             return false;
         }
+
         // Wall is not on top of another wall
-        if board_state.get_wall(action.position) != WallOrientation::None {
+        if !is_wall_overlapping(&board_state, action.position, action.orientation) {
             return false;
         }
-        // Wall is not directly next to another wall of the same orientation        
-        let shift_amount = if action.orientation == WallOrientation::Horizontal {
-            Vector2::new(1, 0)
-        } else {
-            Vector2::new(0, 1)
-        };
-        let adjacent_point_1 = action.position - shift_amount;
-        let adjacent_point_2 = action.position + shift_amount;
-        if BoardState::is_wall_index_in_bounds(adjacent_point_1)
-            && board_state.get_wall(adjacent_point_1) == action.orientation {
-            return false;
-        }
-        if BoardState::is_wall_index_in_bounds(adjacent_point_2)
-            && board_state.get_wall(adjacent_point_2) == action.orientation {
-            return false;
-        }
-        // Player is not boxed in
+
+        // Clone the board_state so we don't mutate the one passed in
         let mut copy = board_state.clone();
         action.apply(&mut copy, player_index);
-        if is_player_trapped(copy, player_index) {
-            return false;
-        }
-        // Opponent is not boxed in
-        let opponent_index = 1 - player_index;
-        if is_player_trapped(copy, opponent_index) {
+
+        // A player is not boxed in
+        if is_either_player_trapped(copy) {
             return false;
         }
     }
     return true;
 }
 
-pub fn is_valid_wall(board_state: BoardState, position: Vector2<isize>, orientation: WallOrientation) -> bool {
+pub fn is_wall_overlapping(board_state: &BoardState, position: Vector2<isize>, orientation: WallOrientation) -> bool {
+    // Wall is not on top of another wall
     if board_state.get_wall(position) != WallOrientation::None {
         return false;
     }
 
     let shift_amount = if orientation == WallOrientation::Horizontal {Vector2::new(1, 0)} else {Vector2::new(0, 1)};
 
+    // Wall is not directly next to another wall of the same orientation    
     let point_a = position + shift_amount;
     if BoardState::is_wall_index_in_bounds(point_a) && board_state.get_wall(point_a) == orientation {                
         return false;
     }
 
+    // Wall is not directly next to another wall of the same orientation    
     let point_b = position - shift_amount;
     if BoardState::is_wall_index_in_bounds(point_b) && board_state.get_wall(point_b) == orientation {                
         return false;
@@ -83,7 +70,7 @@ pub fn is_either_player_trapped(board_state: BoardState) -> bool {
     return is_player_trapped(board_state, 0) || is_player_trapped(board_state, 1);
 }
 
-pub fn get_accessible_adjacent_cells(board_state: BoardState, cell: Vector2<isize>) -> Vec<Vector2<isize>> {
+pub fn get_accessible_adjacent_cells(board_state: &BoardState, cell: Vector2<isize>) -> Vec<Vector2<isize>> {
     let mut cells = Vec::new();
     for &direction in DIRECTIONS.iter() {
         let adjacent_cell = cell + direction;
@@ -94,7 +81,7 @@ pub fn get_accessible_adjacent_cells(board_state: BoardState, cell: Vector2<isiz
     return cells;
 }
 
-pub fn get_valid_moves(board_state: BoardState, from_pos: Vector2<isize>, opponent_pos: Vector2<isize>) -> Vec<Vector2<isize>> {
+pub fn get_valid_moves(board_state: &BoardState, from_pos: Vector2<isize>, opponent_pos: Vector2<isize>) -> Vec<Vector2<isize>> {
     let mut cells = Vec::new();
     for position in get_accessible_adjacent_cells(board_state, from_pos) {
         if position == opponent_pos {
@@ -111,7 +98,7 @@ pub fn get_valid_moves(board_state: BoardState, from_pos: Vector2<isize>, oppone
     return cells;
 }
 
-pub fn get_valid_player_moves(board_state: BoardState, player_index: usize) -> Vec<Vector2<isize>> {
+pub fn get_valid_player_moves(board_state: &BoardState, player_index: usize) -> Vec<Vector2<isize>> {
     let player_position = board_state.get_player_position(player_index);
     let opponent_position = board_state.get_player_position(1 - player_index);
     return get_valid_moves(board_state, player_position, opponent_position);

@@ -11,6 +11,18 @@
                 "$rustc"
             ],
             "group": "build"
+        }, 
+        {
+            "label": "build-release",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "build", "--release"
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
         },
         {
             "label": "test",

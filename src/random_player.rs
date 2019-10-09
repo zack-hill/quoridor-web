@@ -6,7 +6,7 @@ use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
 use rand::seq::SliceRandom;
-use rand::{thread_rng, Rng};
+use rand::{Rng};
 
 pub struct RandomPlayer {
     move_chance: isize,
@@ -21,13 +21,13 @@ impl RandomPlayer {
 }
 
 impl Player for RandomPlayer {
-    fn take_action(&self, board_state: BoardState, player_index: usize) -> Action {
+    fn take_action(&self, board_state: &BoardState, player_index: usize) -> Action {
         loop {
             let mut rng = rand::thread_rng();
             if rng.gen_range(0, 100) < self.move_chance || board_state.get_player_wall_count(player_index) == 0 {
                 let valid_moves = get_valid_player_moves(board_state, player_index);
-                let rand_move = valid_moves.choose(&mut rng);
-                let action = Action::create_move(*rand_move.unwrap());
+                let rand_move = valid_moves.choose(&mut rng).unwrap();
+                let action = Action::create_move(*rand_move);
                 if validate_action(board_state, player_index, &action) {
                     return action;
                 }

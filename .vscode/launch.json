@@ -7,7 +7,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug - Linux",
+            "name": "Linux - Debug",
             "cargo": {
                 "args": [
                     "build",
@@ -23,11 +23,23 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "Debug - Windows",
+            "name": "Windows - Debug",
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/target/debug/quoridor-rust.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false
+        },
+        {
+            "name": "Windows - Release",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "preLaunchTask": "build-release",
+            "program": "${workspaceFolder}/target/release/quoridor-rust.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -55,10 +55,6 @@ impl BoardState {
         self.player_wall_counts[player_index] = value;
     }
 
-    pub fn is_cell_occupied(&self, position: Vector2<isize>) -> bool {
-        return self.player_positions[0] == position || self.player_positions[1] == position;
-    }
-
     pub fn is_path_blocked(&self, cell: Vector2<isize>, direction: Vector2<isize>) -> bool {
         let orientation = if direction.y == 0 { WallOrientation::Vertical } else { WallOrientation::Horizontal };
         for &point in BoardState::get_wall_points(cell, direction).iter() {
