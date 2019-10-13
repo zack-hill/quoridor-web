@@ -151,16 +151,6 @@ mod tests {
 
         assert_eq!(expected, board_state.get_player_position(1));
     }
-    
-    #[test]
-    fn is_cell_occupied() {
-        let player_position = Vector2::new(5, 1);
-        let mut board_state = BoardState::new();
-        board_state.set_player_position(1, player_position);
-
-        assert_eq!(true, board_state.is_cell_occupied(player_position));
-        assert_eq!(false, board_state.is_cell_occupied(Vector2::new(5, 2)));
-    }
 
     #[test]
     fn is_path_blocked_no_walls() {

@@ -151,7 +151,7 @@ mod tests {
         let board_state = BoardState::new();
         let action = Action::create_move(Vector2::new(6, 0));
 
-        assert_eq!(false, validate_action(board_state, 0, &action));
+        assert_eq!(false, validate_action(&board_state, 0, &action));
     }
 
     #[test]
@@ -160,7 +160,7 @@ mod tests {
         board_state.set_player_wall_count(0, 0);
         let action = Action::create_block(Vector2::new(0, 0), WallOrientation::Horizontal);
 
-        assert_eq!(false, validate_action(board_state, 0, &action));
+        assert_eq!(false, validate_action(&board_state, 0, &action));
     }
 
     #[test]
@@ -168,7 +168,7 @@ mod tests {
         let board_state = BoardState::new();
         let action = Action::create_block(Vector2::new(-1, 0), WallOrientation::Horizontal);
 
-        assert_eq!(false, validate_action(board_state, 0, &action));
+        assert_eq!(false, validate_action(&board_state, 0, &action));
     }
 
     #[test]
@@ -177,7 +177,7 @@ mod tests {
         board_state.set_wall(Vector2::new(3, 7), WallOrientation::Horizontal);
         let action = Action::create_block(Vector2::new(3, 7), WallOrientation::Horizontal);
 
-        assert_eq!(false, validate_action(board_state, 0, &action));
+        assert_eq!(false, validate_action(&board_state, 0, &action));
     }
 
     #[test]
@@ -186,7 +186,7 @@ mod tests {
         board_state.set_wall(Vector2::new(4, 7), WallOrientation::Horizontal);
         let action = Action::create_block(Vector2::new(3, 7), WallOrientation::Horizontal);
 
-        assert_eq!(false, validate_action(board_state, 0, &action));
+        assert_eq!(false, validate_action(&board_state, 0, &action));
     }
 
     #[test]
@@ -196,7 +196,7 @@ mod tests {
         board_state.set_wall(Vector2::new(2, 0), WallOrientation::Vertical);
         let action = Action::create_block(Vector2::new(4, 0), WallOrientation::Vertical);
 
-        assert_eq!(false, validate_action(board_state, 0, &action));
+        assert_eq!(false, validate_action(&board_state, 0, &action));
     }
 
     #[test]
@@ -206,7 +206,7 @@ mod tests {
         board_state.set_wall(Vector2::new(2, 7), WallOrientation::Vertical);
         let action = Action::create_block(Vector2::new(4, 7), WallOrientation::Vertical);
 
-        assert_eq!(false, validate_action(board_state, 0, &action));
+        assert_eq!(false, validate_action(&board_state, 0, &action));
     }
 
     #[test]
@@ -215,7 +215,7 @@ mod tests {
         board_state.set_wall(Vector2::new(3, 0), WallOrientation::Horizontal);
         board_state.set_wall(Vector2::new(2, 0), WallOrientation::Vertical);
 
-        let valid_moves = get_valid_player_moves(board_state, 0);
+        let valid_moves = get_valid_player_moves(&board_state, 0);
 
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 0)));
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(5, 0)));
@@ -226,7 +226,7 @@ mod tests {
         let mut board_state = BoardState::new();
         board_state.set_player_position(0, Vector2::new(3, 3));
 
-        let valid_moves = get_valid_player_moves(board_state, 0);
+        let valid_moves = get_valid_player_moves(&board_state, 0);
 
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 2)));
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 4)));
@@ -241,7 +241,7 @@ mod tests {
         board_state.set_player_position(0, Vector2::new(3, 3));
         board_state.set_player_position(1, Vector2::new(3, 4));
 
-        let valid_moves = get_valid_player_moves(board_state, 0);
+        let valid_moves = get_valid_player_moves(&board_state, 0);
 
         // 3 normal moves
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 2)));
@@ -261,7 +261,7 @@ mod tests {
         board_state.set_player_position(1, Vector2::new(3, 4));
         board_state.set_wall(Vector2::new(2, 4), WallOrientation::Horizontal);
 
-        let valid_moves = get_valid_player_moves(board_state, 0);
+        let valid_moves = get_valid_player_moves(&board_state, 0);
 
         // 3 normal moves
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 2)));
