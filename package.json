@@ -1,0 +1,25 @@
+{
+  "name": "quoridor-web",
+  "version": "1.0.0",
+  "description": "quoridor-web",
+  "main": "src/index.html",
+  "scripts": {
+    "scss": "node-sass src/scss -o src/css",
+    "watch-scss": "node-sass --watch src/scss -o src/css",
+    "build": "npm run scss & ",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zack-hill/quoridor-web.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zack-hill/quoridor-web/issues"
+  },
+  "homepage": "https://github.com/zack-hill/quoridor-web#readme",
+  "dependencies": {
+    "node-sass": "^4.13.0"
+  }
+}
