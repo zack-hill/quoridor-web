@@ -16,7 +16,7 @@ function resizeCanvas() {
 function onLoad() {
     canvas = document.getElementById("board");
     distCanvas = document.getElementById("distance-meter");
-    turnDelay = document.getElementById("turnDelayValue").value;
+    turnDelay = document.getElementById("turn-delay-value").value;
 
     game = new Game();
     setPlayer("shortest-path", 0)
@@ -170,8 +170,8 @@ function onReset() {
 
 function onDelayChange(value) {
     turnDelay = value;
-    document.getElementById("turnDelaySlider").value = value;
-    document.getElementById("turnDelayValue").value = value;
+    document.getElementById("turn-delay-slider").value = value;
+    document.getElementById("turn-delay-value").value = value;
 }
 
 function redraw() {

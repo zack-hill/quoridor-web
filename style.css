@@ -7,38 +7,89 @@ select {
     margin-left: 30px;
 }
 
-#board {
-    background-color: #FAFAFA;
-    border-radius: 5px;
-    width: 100%;
-}
-
 .container {    
     margin: auto;
 }
 
-.left-column {    
-    margin-left: 15px;
-    margin-right: 0;
-    margin-top: 15px;
-    margin-bottom: 15px;
+.left-column {
+    padding: 0;
+    margin: 0;
+}
+
+.middle-column {
+    padding: 0;
+    margin: 0;
     text-align: right;
 }
 
 .right-column {    
-    margin-left: 15px;
-    margin-right: 0;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    padding: 0;
+    margin: 0;
+    height: 100vh;
 }
 
-#top-panel {
-    padding: 20px;
+.selected {
+    background-color: #b3e5fc;
 }
 
 .panel {
     background-color: #FAFAFA;
     border-radius: 5px;
+}
+
+#controls-panel {
+    margin: 20px;
+    padding: 10px;
+}
+
+#board {
+    background-color: #FAFAFA;
+    border-radius: 5px;
+    margin: 20px 0;
+}
+
+#turns-wrapper-panel{
+    height: 90%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    -ms-box-sizing:     border-box;
+    -o-box-sizing:      border-box;
+    box-sizing:         border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+}
+
+#turns-panel {    
+    display: inline-block;
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+#turns-panel tr{
+    display: inline-block;
+    width: 100%;
+}
+
+#turns-panel tbody{
+    display: inline-block;
+}
+
+#turns-panel table{
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    display: inline-block;
+    overflow-y: auto;
+    width: 100%;
+    margin: 0;
+    table-layout: fixed; 
+}
+
+table td:last-child {
+    width: 100%;
 }
 
 .unselectable {
@@ -50,12 +101,23 @@ select {
     user-select: none;
 }
 
-#turnDelaySlider {
+#turn-delay-slider {
     vertical-align: middle;
 }
 
-#turnDelayValue {
+#turn-delay-value {
     width: 75px;
+}
+
+#turns-table-header-wrapper {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    -ms-box-sizing:     border-box;
+    -o-box-sizing:      border-box;
+    box-sizing:         border-box;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-right: 20px;
 }
 
 .table-header {
@@ -63,21 +125,14 @@ select {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     font-weight: bold;
-    padding: 10px;
     text-align: center;
-}
-
-#turn-table {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    display: inline-block;
-    overflow-y: auto;
     width: 100%;
-    height: 70%;
-}
-
-#text-column {
-    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    -ms-box-sizing:     border-box;
+    -o-box-sizing:      border-box;
+    box-sizing:         border-box;
+    padding: 10px;
 }
 
 .player-chip-1{
@@ -102,19 +157,15 @@ select {
 }
 
 .button-success {
-    background: rgb(28, 184, 65); /* this is a green */
+    background: rgb(28, 184, 65);
 }
 
 .button-error {
-    background: rgb(202, 60, 60); /* this is a maroon */
+    background: rgb(202, 60, 60);
 }
 
 .button-warning {
-    background: rgb(223, 117, 20); /* this is an orange */
-}
-
-.button-secondary {
-    background: rgb(66, 184, 221); /* this is a light blue */
+    background: rgb(223, 117, 20);
 }
 
 .nav-button {
@@ -131,40 +182,27 @@ select {
 }
 
 #distance-meter-panel {
-    margin-top: 15px;    
     padding: 15px;
     text-align: center;
 }
 
+#distance-meter-panel label{
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 20px;
+    display: inline-block;
+    line-height: 20px;
+}
+
 #distance-meter {
-    width: 100%;
     border-radius: 5px;
     border-style: solid;
     border-color: black;
     border-width: 2px;
     height: 20px;
-}
-
-#test{
-    border-radius: 5px;
-}
-
-#distance-meter-label-left {
-    vertical-align: middle;
-    font-weight: bold;
-    font-size: 20px;
-    display: inline-block;
-    line-height: 20px;
-}
-
-#distance-meter-label-right {
-    vertical-align: middle;
-    font-weight: bold;
-    font-size: 20px;
-    display: inline-block;
-    line-height: 20px;
-}
-
-.selected {
-    background-color: #b3e5fc;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    -ms-box-sizing:     border-box;
+    -o-box-sizing:      border-box;
+    box-sizing:         border-box;
 }
