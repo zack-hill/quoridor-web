@@ -67,7 +67,6 @@ select {
   border-bottom-right-radius: 5px;
   display: inline-block;
   overflow-y: auto;
-  width: 100%;
   margin: 0;
   table-layout: fixed; }
 
