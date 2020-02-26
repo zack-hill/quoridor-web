@@ -118,9 +118,9 @@ async function gameLoop(cancelToken) {
 
         redraw()
 
-        if (turnDelay != 0) {
-            await new Promise(resolve => setTimeout(resolve, turnDelay));
-        }
+        // Don't actually let the delay go to zero, this will lock up the UI
+        delay = Math.max(turnDelay, 1)
+        await new Promise(resolve => setTimeout(resolve, delay));
         if (cancelToken.isCancelled) {
             return;
         }
