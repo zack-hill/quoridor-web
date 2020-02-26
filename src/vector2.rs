@@ -8,7 +8,7 @@ pub struct Vector2<T> {
 }
 
 impl<T> Vector2<T> {
-    pub fn new(x: T, y: T) -> Vector2<T> {
+    pub fn new(x: T, y: T) -> Self {
         Vector2 {
             x,
             y,
@@ -24,7 +24,7 @@ impl<T: Display> Display for Vector2<T> {
 
 impl<T: Add<Output = T>> Add for Vector2<T> {
     type Output = Vector2<T>;
-    fn add(self, rhs: Vector2<T>) -> Vector2<T> {
+    fn add(self, rhs: Vector2<T>) -> Self {
         return Vector2 {
             x: self.x + rhs.x,
             y: self.y + rhs.y
@@ -34,7 +34,7 @@ impl<T: Add<Output = T>> Add for Vector2<T> {
 
 impl<T: Sub<Output = T>> Sub for Vector2<T> {
     type Output = Vector2<T>;
-    fn sub(self, rhs: Vector2<T>) -> Vector2<T> {
+    fn sub(self, rhs: Vector2<T>) -> Self {
         return Vector2 {
             x: self.x - rhs.x,
             y: self.y - rhs.y

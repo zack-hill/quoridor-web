@@ -12,7 +12,7 @@ pub struct Action {
 }
 
 impl Action {
-    pub fn create_move(position: Vector2<isize>) -> Action {
+    pub fn create_move(position: Vector2<isize>) -> Self {
         Action {
             action_type: ActionType::Move,
             position,
@@ -20,7 +20,7 @@ impl Action {
         }
     }
 
-    pub fn create_block(position: Vector2<isize>, orientation: WallOrientation) -> Action {
+    pub fn create_block(position: Vector2<isize>, orientation: WallOrientation) -> Self {
         Action {
             action_type: ActionType::Block,
             position,

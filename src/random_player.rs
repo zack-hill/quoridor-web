@@ -13,7 +13,7 @@ pub struct RandomPlayer {
 }
 
 impl RandomPlayer {
-    pub fn new(move_chance: isize) -> RandomPlayer {
+    pub fn new(move_chance: isize) -> Self {
         return RandomPlayer {
             move_chance
         };
@@ -22,15 +22,13 @@ impl RandomPlayer {
 
 impl Player for RandomPlayer {
     fn take_action(&self, board_state: &BoardState, player_index: usize) -> Action {
+        let mut rng = rand::thread_rng();
         loop {
-            let mut rng = rand::thread_rng();
             if rng.gen_range(0, 100) < self.move_chance || board_state.get_player_wall_count(player_index) == 0 {
                 let valid_moves = get_valid_player_moves(board_state, player_index);
                 let rand_move = valid_moves.choose(&mut rng).unwrap();
                 let action = Action::create_move(*rand_move);
-                if validate_action(board_state, player_index, &action) {
-                    return action;
-                }
+                return action;
             }
             else {
                 let position = Vector2::new(rng.gen_range(0, 8), rng.gen_range(0, 8));

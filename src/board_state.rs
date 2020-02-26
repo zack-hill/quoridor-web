@@ -20,7 +20,7 @@ pub struct BoardState {
 }
 
 impl BoardState {
-    pub fn new() -> BoardState {
+    pub fn new() -> Self {
         BoardState {
             walls: [[WallOrientation::None; 8]; 8],
             player_positions: [Vector2::new(4, 0), Vector2::new(4, 8)],

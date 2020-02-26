@@ -29,14 +29,6 @@ impl<'a> Game<'a> {
 
         let current_player = self.players[self.current_player_index];
         let action = current_player.take_action(&self.current_board_state, self.current_player_index);
-        
-        if !validation::validate_action(&self.current_board_state, self.current_player_index, &action) {
-            println!("Player {} made an invalid move!", self.current_player_index);
-            self.is_over = true;
-            self.switch_players(); // switch players because the current player lost. We want the current_player_index
-                                   // to represent the winning player when is_over is true.
-            return true;
-        }
 
         self.turns.push(Turn::new(self.current_board_state, self.current_player_index, action));
 
