@@ -54,7 +54,9 @@
                             <select id="select-player1" class="pure-u-3-5" onchange="setPlayer(this.value, 0)">
                                 <option value="random">Random</option>
                                 <option value="shortest-path">Shortest Path</option>
-                                <option value="minimax">Minimax</option>
+                                <option value="minimax-1">Minimax 1</option>
+                                <option value="minimax-2">Minimax 2</option>
+                                <option value="minimax-3">Minimax 3</option>
                             </select>
                         </div>
                         <div class="pure-g">
@@ -62,7 +64,9 @@
                             <select id="select-player2" class="pure-u-3-5" onchange="setPlayer(this.value, 1)">
                                 <option value="random">Random</option>
                                 <option value="shortest-path">Shortest Path</option>
-                                <option value="minimax">Minimax</option>
+                                <option value="minimax-1">Minimax 1</option>
+                                <option value="minimax-2">Minimax 2</option>
+                                <option value="minimax-3">Minimax 3</option>
                             </select>
                         </div>
                     </fieldset>
@@ -70,9 +74,9 @@
                 <div class="pure-g pure-u-1 pure-form">
                     <fieldset id="turnDelayFieldset">
                         <legend>Turn Delay (ms)</legend>
-                        <input id="turn-delay-slider" class="pure-u-1-2" type="range" min=0 max=1000 step=25 value=250
+                        <input id="turn-delay-slider" class="pure-u-1-2" type="range" min=0 max=1000 step=25 value=0
                             onchange="onDelayChange(this.value)" oninput="onDelayChange(this.value)">
-                        <input id="turn-delay-value" type="number" value="250" min=0 step=25
+                        <input id="turn-delay-value" type="number" value="0" min=0 step=25
                             onchange="onDelayChange(this.value)">
                     </fieldset>
                 </div>

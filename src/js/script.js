@@ -19,7 +19,7 @@ function onLoad() {
     turnDelay = document.getElementById("turn-delay-value").value;
 
     game = new Game();
-    setPlayer("shortest-path", 0)
+    setPlayer("minimax-2", 0)
     setPlayer("shortest-path", 1)
 
     window.addEventListener("resize", resizeCanvas, false);
@@ -142,8 +142,16 @@ function setIsPlaying(value) {
 }
 
 function setPlayer(value, index) {
-    if (value == "minimax") {
-        game.setPlayer(new MinimaxPlayer(2), index)
+    if (value.startsWith("minimax")) {
+        if (value.endsWith("1")){
+            game.setPlayer(new MinimaxPlayer(1), index)
+        }
+        else if (value.endsWith("2")){
+            game.setPlayer(new MinimaxPlayer(2), index)
+        }
+        else if (value.endsWith("3")){
+            game.setPlayer(new MinimaxPlayer(3), index)
+        }
     } else if (value == "shortest-path") {
         game.setPlayer(new ShortestPathPlayer(), index)
     } else {
