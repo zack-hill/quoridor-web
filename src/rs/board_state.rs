@@ -18,18 +18,20 @@ pub struct BoardState {
     pub walls: [[WallOrientation; 8]; 8],
     pub player_positions: [Vector2<isize>; 2],
     pub player_wall_counts: [usize; 2],
-    pub distance_matrices: [Option<[[isize; 9]; 9]>; 2],
+    pub distance_matrices: [[[isize; 9]; 9]; 2],
 }
-
 
 impl BoardState {
     pub fn new() -> Self {
-        BoardState {
+        let mut board_state = BoardState {
             walls: [[WallOrientation::None; 8]; 8],
             player_positions: [Vector2::new(4, 0), Vector2::new(4, 8)],
             player_wall_counts: [10; 2],
-            distance_matrices: [None; 2],
-        }
+            distance_matrices: [[[-1; 9]; 9]; 2],
+        };
+        board_state.distance_matrices[0] = board_state.calculate_distance_matrix(8);
+        board_state.distance_matrices[1] = board_state.calculate_distance_matrix(0);
+        return board_state;
     }
 
     pub fn get_wall(&self, position: Vector2<isize>) -> WallOrientation {
@@ -38,8 +40,8 @@ impl BoardState {
 
     pub fn set_wall(&mut self, position: Vector2<isize>, value: WallOrientation) {
         self.walls[position.x as usize][position.y as usize] = value;
-        self.distance_matrices[0] = None;
-        self.distance_matrices[1] = None;
+        self.distance_matrices[0] = self.calculate_distance_matrix(8);
+        self.distance_matrices[1] = self.calculate_distance_matrix(0);
     }
 
     pub fn get_player_position(&self, player_index: usize) -> Vector2<isize> {
@@ -100,11 +102,8 @@ impl BoardState {
         return self.get_distance_matrix(player_index)[player_position.x as usize][player_position.y as usize];
     }
 
-    pub fn get_distance_matrix(&mut self, player_index: usize) -> [[isize; 9]; 9] {
-        if self.distance_matrices[player_index].is_none() {
-            self.distance_matrices[player_index] = Some(self.calculate_distance_matrix(if player_index == 0 {8} else {0}));
-        }
-        return self.distance_matrices[player_index].unwrap();
+    pub fn get_distance_matrix(&self, player_index: usize) -> [[isize; 9]; 9] {
+        return self.distance_matrices[player_index];
     }
 
     fn calculate_distance_matrix(&mut self, row: usize) -> [[isize; 9]; 9] {

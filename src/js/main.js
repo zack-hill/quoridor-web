@@ -131,7 +131,17 @@ function insertTurnRow(turnNumber, message) {
 
 function take_turn() {
     let playerIndex = currentTurnNumber % 2;
-    let action = JSON.parse(Quoridor.take_random_turn(playerIndex, 0.5));
+    let player = playerIndex == 0 
+        ? document.getElementById("select-player1").value
+        : document.getElementById("select-player2").value;
+
+    let actionJson = null;
+    if (player.startsWith("shortest-path")) {
+        actionJson = Quoridor.take_shortest_path_turn(playerIndex, 0.5)
+    } else {
+        actionJson = Quoridor.take_random_turn(playerIndex, 0.5)
+    }
+    let action = JSON.parse(actionJson);
     let boardState = JSON.parse(Quoridor.get_board());
     turns.push(boardState)
 

@@ -2,6 +2,7 @@ mod action;
 mod action_type;
 mod board_state;
 mod random_player;
+mod shortest_path_player;
 mod validation;
 mod vector2;
 mod wall_orientation;
@@ -9,6 +10,7 @@ mod wall_orientation;
 use crate::action::Action;
 use crate::board_state::BoardState;
 use crate::random_player::RandomPlayer;
+use crate::shortest_path_player::ShortestPathPlayer;
 use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
@@ -47,9 +49,6 @@ pub fn is_game_over() -> bool {
 pub fn reset_board() {
     let board_state = &mut BOARD_STATE.lock().unwrap();
     **board_state = BoardState::new();
-    //todo: Find a cleaner way of generating distance matrices for the UI
-    board_state.get_player_distance(0);
-    board_state.get_player_distance(1);
 }
 
 #[wasm_bindgen]
@@ -57,9 +56,14 @@ pub fn take_random_turn(player_index: usize, move_chance: f32) -> String {
     let board_state = &mut BOARD_STATE.lock().unwrap();
     let action = RandomPlayer::take_action(&board_state, player_index, move_chance);
     action.apply(board_state, player_index);
-    //todo: Find a cleaner way of generating distance matrices for the UI
-    board_state.get_player_distance(0);
-    board_state.get_player_distance(1);
+    return String::from(serde_json::to_string(&action).unwrap());
+}
+
+#[wasm_bindgen]
+pub fn take_shortest_path_turn(player_index: usize, move_chance: f32) -> String {
+    let board_state = &mut BOARD_STATE.lock().unwrap();
+    let action = ShortestPathPlayer::take_action(&board_state, player_index, move_chance);
+    action.apply(board_state, player_index);
     return String::from(serde_json::to_string(&action).unwrap());
 }
 
