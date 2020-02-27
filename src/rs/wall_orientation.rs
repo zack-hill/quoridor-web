@@ -1,6 +1,7 @@
 use std::fmt;
+use serde::Serialize;
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Serialize)]
 pub enum WallOrientation {
     None = 0,
     Vertical = 1,

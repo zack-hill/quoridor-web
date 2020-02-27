@@ -1,7 +1,8 @@
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, Sub};
+use serde::Serialize;
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Serialize)]
 pub struct Vector2<T> {
     pub x: T,
     pub y: T,

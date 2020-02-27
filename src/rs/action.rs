@@ -2,9 +2,11 @@ use crate::action_type::ActionType;
 use crate::board_state::BoardState;
 use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
+
+use serde::Serialize;
 use std::fmt;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
 pub struct Action {
     pub action_type: ActionType,
     pub position: Vector2<isize>,

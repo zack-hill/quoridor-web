@@ -1,6 +1,8 @@
 use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
+
 use std::collections::VecDeque;
+use serde::Serialize;
 
 lazy_static! {
     pub static ref DIRECTIONS: [Vector2<isize>; 4] = [
@@ -11,13 +13,14 @@ lazy_static! {
     ];
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
 pub struct BoardState {
     pub walls: [[WallOrientation; 8]; 8],
     pub player_positions: [Vector2<isize>; 2],
     pub player_wall_counts: [usize; 2],
     pub distance_matrices: [Option<[[isize; 9]; 9]>; 2],
 }
+
 
 impl BoardState {
     pub fn new() -> Self {
