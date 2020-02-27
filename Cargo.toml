@@ -4,6 +4,14 @@ version = "0.1.0"
 authors = ["Zack Hill <zackary.t.hill@gmail.com>"]
 edition = "2018"
 
+[[bin]]
+name = "quoridor"
+path = "src/rs/main.rs"
+
+[lib]
+name = "quoridor"
+path = "src/rs/lib.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

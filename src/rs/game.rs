@@ -1,7 +1,6 @@
 use crate::board_state::BoardState;
 use crate::player::Player;
 use crate::turn::Turn;
-use crate::validation;
 
 pub struct Game<'a> {
     players: [&'a dyn Player; 2],

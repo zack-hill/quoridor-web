@@ -11,7 +11,7 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=quoridor-rust",
+                    "--bin=quoridor",
                     "--package=quoridor-rust"
                 ],
                 "filter": {
@@ -27,7 +27,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/target/debug/quoridor-rust.exe",
+            "program": "${workspaceFolder}/target/debug/quoridor.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -39,7 +39,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "build-release",
-            "program": "${workspaceFolder}/target/release/quoridor-rust.exe",
+            "program": "${workspaceFolder}/target/release/quoridor.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
