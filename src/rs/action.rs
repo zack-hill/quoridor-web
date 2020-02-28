@@ -36,6 +36,7 @@ impl Action {
         }
         else {
             board_state.set_wall(self.position, self.orientation);
+            board_state.set_player_wall(self.position, player_index);
             board_state.set_player_wall_count(player_index, board_state.get_player_wall_count(player_index) - 1);
         }
     }
@@ -72,9 +73,10 @@ mod tests {
         let mut board_state = BoardState::new();
         let action = Action::create_block(wall_position, wall_orientation);
 
-        action.apply(&mut board_state, 0);
+        action.apply(&mut board_state, 1);
 
         assert_eq!(wall_orientation, board_state.get_wall(wall_position));
-        assert_eq!(9, board_state.get_player_wall_count(0));
+        assert_eq!(1, board_state.player_walls[wall_position.x as usize][wall_position.y as usize]);
+        assert_eq!(9, board_state.get_player_wall_count(1));
     }
 }

@@ -18,6 +18,7 @@ pub struct BoardState {
     pub walls: [[WallOrientation; 8]; 8],
     pub player_positions: [Vector2<isize>; 2],
     pub player_wall_counts: [usize; 2],
+    pub player_walls: [[isize; 8]; 8],
     pub distance_matrices: [[[isize; 9]; 9]; 2],
 }
 
@@ -27,6 +28,7 @@ impl BoardState {
             walls: [[WallOrientation::None; 8]; 8],
             player_positions: [Vector2::new(4, 0), Vector2::new(4, 8)],
             player_wall_counts: [10; 2],
+            player_walls: [[-1; 8]; 8],
             distance_matrices: [[[-1; 9]; 9]; 2],
         };
         board_state.distance_matrices[0] = board_state.calculate_distance_matrix(8);
@@ -42,6 +44,10 @@ impl BoardState {
         self.walls[position.x as usize][position.y as usize] = value;
         self.distance_matrices[0] = self.calculate_distance_matrix(8);
         self.distance_matrices[1] = self.calculate_distance_matrix(0);
+    }
+
+    pub fn set_player_wall(&mut self, position: Vector2<isize>, player_index: usize) {
+        self.player_walls[position.x as usize][position.y as usize] = player_index as isize;
     }
 
     pub fn get_player_position(&self, player_index: usize) -> Vector2<isize> {

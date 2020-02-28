@@ -144,7 +144,7 @@ function drawBoard() {
         for (var x = 0; x < 8; x++) {
             var orientation = boardState.walls[x][y];
             if (orientation != "None") {
-                let playerIndex = 0; //todo: Update rust board state to have this information.
+                let playerIndex = boardState.player_walls[x][y]; 
                 var centerX = Math.floor((x + 1) * cellWidth);
                 var centerY = Math.floor((8 - y) * cellHeight);
                 if (playerIndex == 0) {
