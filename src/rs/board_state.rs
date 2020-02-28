@@ -97,7 +97,7 @@ impl BoardState {
         return cell.x >= 0 && cell.y >= 0 && cell.x < 9 && cell.y < 9;
     }
 
-    pub fn get_player_distance(&mut self, player_index: usize) -> isize {
+    pub fn get_player_distance(&self, player_index: usize) -> isize {
         let player_position = self.get_player_position(player_index);
         return self.get_distance_matrix(player_index)[player_position.x as usize][player_position.y as usize];
     }
@@ -106,7 +106,7 @@ impl BoardState {
         return self.distance_matrices[player_index];
     }
 
-    fn calculate_distance_matrix(&mut self, row: usize) -> [[isize; 9]; 9] {
+    fn calculate_distance_matrix(&self, row: usize) -> [[isize; 9]; 9] {
         let mut matrix = [[-1; 9]; 9];
         let mut queue: VecDeque<Vector2<isize>> = VecDeque::new();
         for x in 0..9 {

@@ -29,8 +29,8 @@ function onLoad() {
     document.getElementById("btn-back").addEventListener("click", onBack);
     document.getElementById("btn-forward").addEventListener("click", onForward);
     document.getElementById("btn-end").addEventListener("click", onJumpToEnd);
-    document.getElementById("select-player1").value = "random";
-    document.getElementById("select-player2").value = "random";
+    document.getElementById("select-player1").value = "minimax-2";
+    document.getElementById("select-player2").value = "shortest-path";
     document.getElementById("select-matrix-mode").addEventListener("change", redraw);
     document.getElementById("select-matrix-player").addEventListener("change", redraw);
     document.getElementById("select-matrix-text").addEventListener("change", redraw);
@@ -136,7 +136,18 @@ function take_turn() {
         : document.getElementById("select-player2").value;
 
     let actionJson = null;
-    if (player.startsWith("shortest-path")) {
+    if (player.startsWith("minimax")) {
+        let depth = 0;
+        if (player.endsWith("1")) {
+            depth = 1;
+        } else if (player.endsWith("2")) {
+            depth = 2;
+        } else if (player.endsWith("3")) {
+            depth = 3;
+        }
+        actionJson = Quoridor.take_minimax_turn(playerIndex, depth)
+    }
+    else if (player.startsWith("shortest-path")) {
         actionJson = Quoridor.take_shortest_path_turn(playerIndex, 0.5)
     } else {
         actionJson = Quoridor.take_random_turn(playerIndex, 0.5)

@@ -23,7 +23,7 @@ pub fn validate_action(board_state: &BoardState, player_index: usize, action: &A
         }
 
         // Wall is not on top of another wall
-        if !is_wall_overlapping(&board_state, action.position, action.orientation) {
+        if is_wall_overlapping(&board_state, action.position, action.orientation) {
             return false;
         }
 
@@ -32,7 +32,7 @@ pub fn validate_action(board_state: &BoardState, player_index: usize, action: &A
         action.apply(&mut copy, player_index);
 
         // A player is not boxed in
-        if is_either_player_trapped(copy) {
+        if is_either_player_trapped(&copy) {
             return false;
         }
     }
@@ -42,7 +42,7 @@ pub fn validate_action(board_state: &BoardState, player_index: usize, action: &A
 pub fn is_wall_overlapping(board_state: &BoardState, position: Vector2<isize>, orientation: WallOrientation) -> bool {
     // Wall is not on top of another wall
     if board_state.get_wall(position) != WallOrientation::None {
-        return false;
+        return true;
     }
 
     let shift_amount = if orientation == WallOrientation::Horizontal {Vector2::new(1, 0)} else {Vector2::new(0, 1)};
@@ -50,23 +50,23 @@ pub fn is_wall_overlapping(board_state: &BoardState, position: Vector2<isize>, o
     // Wall is not directly next to another wall of the same orientation    
     let point_a = position + shift_amount;
     if BoardState::is_wall_index_in_bounds(point_a) && board_state.get_wall(point_a) == orientation {                
-        return false;
+        return true;
     }
 
     // Wall is not directly next to another wall of the same orientation    
     let point_b = position - shift_amount;
     if BoardState::is_wall_index_in_bounds(point_b) && board_state.get_wall(point_b) == orientation {                
-        return false;
+        return true;
     }
 
-    return true;
+    return false;
 }
 
-pub fn is_player_trapped(mut board_state: BoardState, player_index: usize) -> bool {
+pub fn is_player_trapped(board_state: &BoardState, player_index: usize) -> bool {
     return board_state.get_player_distance(player_index) == -1;
 }
 
-pub fn is_either_player_trapped(board_state: BoardState) -> bool {
+pub fn is_either_player_trapped(board_state: &BoardState) -> bool {
     return is_player_trapped(board_state, 0) || is_player_trapped(board_state, 1);
 }
 
@@ -115,8 +115,8 @@ mod tests {
         board_state.set_wall(Vector2::new(2, 0), WallOrientation::Vertical);
         board_state.set_wall(Vector2::new(4, 0), WallOrientation::Vertical);
 
-        assert_eq!(true, is_player_trapped(board_state, 0));
-        assert_eq!(true, is_either_player_trapped(board_state));
+        assert_eq!(true, is_player_trapped(&board_state, 0));
+        assert_eq!(true, is_either_player_trapped(&board_state));
     }
     
     #[test]
@@ -126,24 +126,24 @@ mod tests {
         board_state.set_wall(Vector2::new(2, 7), WallOrientation::Vertical);
         board_state.set_wall(Vector2::new(4, 7), WallOrientation::Vertical);
 
-        assert_eq!(true, is_player_trapped(board_state, 1));
-        assert_eq!(true, is_either_player_trapped(board_state));
+        assert_eq!(true, is_player_trapped(&board_state, 1));
+        assert_eq!(true, is_either_player_trapped(&board_state));
     }
 
     #[test]
     fn player_1_is_not_trapped() {
         let board_state = BoardState::new();
 
-        assert_eq!(false, is_player_trapped(board_state, 0));
-        assert_eq!(false, is_either_player_trapped(board_state));
+        assert_eq!(false, is_player_trapped(&board_state, 0));
+        assert_eq!(false, is_either_player_trapped(&board_state));
     }
 
     #[test]
     fn player_2_is_not_trapped() {
         let board_state = BoardState::new();
 
-        assert_eq!(false, is_player_trapped(board_state, 1));
-        assert_eq!(false, is_either_player_trapped(board_state));
+        assert_eq!(false, is_player_trapped(&board_state, 1));
+        assert_eq!(false, is_either_player_trapped(&board_state));
     }
 
     #[test]

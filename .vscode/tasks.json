@@ -5,8 +5,11 @@
     "tasks": [
         {
             "label": "build",
-            "type": "cargo",
-            "subcommand": "build",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "build"
+            ],
             "problemMatcher": [
                 "$rustc"
             ],
@@ -17,7 +20,8 @@
             "type": "shell",
             "command": "cargo",
             "args": [
-                "build", "--release"
+                "build",
+                "--release"
             ],
             "problemMatcher": [
                 "$rustc"
@@ -25,24 +29,36 @@
             "group": "build"
         },
         {
-            "label": "test",
-            "type": "cargo",
-            "subcommand": "test",
-            "problemMatcher": [
-                "$rustc"
-            ],
-            "group": "build"
-        },
-        {
+            "label": "run",
             "type": "shell",
-            "label": "cargo test build",
             "command": "cargo",
             "args": [
-                "test", "--no-run"
+                "run"
             ],
             "problemMatcher": [
                 "$rustc"
-            ]
+            ],
+            "group": "build"
         }
+        // {
+        //     "label": "test",
+        //     "type": "cargo",
+        //     "subcommand": "test",
+        //     "problemMatcher": [
+        //         "$rustc"
+        //     ],
+        //     "group": "build"
+        // },
+        // {
+        //     "type": "shell",
+        //     "label": "cargo test build",
+        //     "command": "cargo",
+        //     "args": [
+        //         "test", "--no-run"
+        //     ],
+        //     "problemMatcher": [
+        //         "$rustc"
+        //     ]
+        // }
     ]
 }

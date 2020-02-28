@@ -1,13 +1,17 @@
 mod action;
 mod action_type;
 mod board_state;
+mod minimax_player;
 mod random_player;
+mod shortest_path_player;
 mod validation;
 mod vector2;
 mod wall_orientation;
 
 use board_state::BoardState;
-use random_player::RandomPlayer;
+use minimax_player::MinimaxPlayer;
+// use random_player::RandomPlayer;
+use shortest_path_player::ShortestPathPlayer;
 
 #[macro_use]
 extern crate lazy_static;
@@ -18,7 +22,7 @@ fn main() {
     let mut total_turn_count = 0;
 
     let start = Instant::now();
-    let game_count = 10000;
+    let game_count = 20;
     let mut player_1_wins = 0;
 
     for i in 0..game_count {
@@ -27,9 +31,11 @@ fn main() {
         let mut turn_count = 0;
         loop {
             let action = if player_index == 0 { 
-                RandomPlayer::take_action(&board_state, player_index, 0.5)
+                MinimaxPlayer::take_action(&board_state, player_index, 3)
+                //ShortestPathPlayer::take_action(&board_state, player_index, 0.5)
             } else {
-                RandomPlayer::take_action(&board_state, player_index, 0.5)
+                //MinimaxPlayer::take_action(&board_state, player_index, 3)
+                ShortestPathPlayer::take_action(&board_state, player_index, 0.5)
             };
             action.apply(&mut board_state, player_index);
             turn_count += 1;
@@ -39,12 +45,13 @@ fn main() {
                     player_1_wins += 1;
                 }
                 break;
+
             }
             player_index = 1 - player_index;
         }
         total_turn_count += turn_count;
 
-        if i % 1000 == 0 {
+        if i % 1 == 0 {
             println!("{} ({}%)", i, i as f32 / game_count as f32 * 100.0);
         }
     }    
@@ -54,8 +61,8 @@ fn main() {
     let player_2_wins = game_count - player_1_wins;
     println!("== Complete ==");
     println!("Time Elapsed: {:.2} s)", duration);
-    println!("Game rate: {:.0} g/s)", games_per_sec);
-    println!("Turn rate: {:.0} t/s)", turns_per_sec);
+    println!("Game rate: {:.1} g/s)", games_per_sec);
+    println!("Turn rate: {:.1} t/s)", turns_per_sec);
     println!("Player 1 wins: {} ({:.1}%))", player_1_wins, player_1_wins as f32 / game_count as f32 * 100.0);
     println!("Player 2 wins: {} ({:.1}%))", player_2_wins, player_2_wins as f32 / game_count as f32 * 100.0);
 }
