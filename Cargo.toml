@@ -1,0 +1,28 @@
+[package]
+name = "quoridor-rust"
+version = "0.1.0"
+authors = ["Zack Hill <zackary.t.hill@gmail.com>"]
+edition = "2018"
+
+[[bin]]
+name = "quoridor"
+path = "src/rs/main.rs"
+
+[lib]
+name = "quoridor"
+path = "src/rs/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+wee_alloc = { version = "0.4.2", optional = true }
+lazy_static = "1.4.0"
+rand = { version = "0.7.2", features = ["wasm-bindgen"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.48"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.2"
+wee_alloc = { version = "0.4.2" }
+lazy_static = "1.4.0"
+rand = { version = "0.7.2", features = ["wasm-bindgen"] }
