@@ -72,10 +72,9 @@ pub fn is_either_player_trapped(board_state: &BoardState) -> bool {
 
 pub fn get_accessible_adjacent_cells(board_state: &BoardState, cell: Vector2<isize>) -> Vec<Vector2<isize>> {
     let mut cells = Vec::new();
-    for &direction in DIRECTIONS.iter() {
-        let adjacent_cell = cell + direction;
-        if BoardState::is_cell_index_in_bounds(adjacent_cell) && !board_state.is_path_blocked(cell, direction) {
-            cells.push(adjacent_cell);
+    for i in 0..4 {
+        if board_state.cell_connections[cell.x as usize][cell.y as usize][i] {
+            cells.push(cell + DIRECTIONS[i]);
         }
     }
     return cells;

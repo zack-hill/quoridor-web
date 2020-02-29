@@ -4,11 +4,15 @@ use crate::wall_orientation::WallOrientation;
 use std::collections::VecDeque;
 use serde::Serialize;
 
+const RIGHT: usize = 0;
+const UP: usize = 1;
+const LEFT: usize = 2;
+const DOWN: usize = 3;
 lazy_static! {
     pub static ref DIRECTIONS: [Vector2<isize>; 4] = [
         Vector2::new(1, 0),
-        Vector2::new(-1, 0),
         Vector2::new(0, 1),
+        Vector2::new(-1, 0),
         Vector2::new(0, -1),
     ];
 }
@@ -16,6 +20,7 @@ lazy_static! {
 #[derive(Copy, Clone, Serialize)]
 pub struct BoardState {
     pub walls: [[WallOrientation; 8]; 8],
+    pub cell_connections: [[[bool; 4]; 9]; 9],
     pub player_positions: [Vector2<isize>; 2],
     pub player_wall_counts: [usize; 2],
     pub player_walls: [[isize; 8]; 8],
@@ -26,13 +31,26 @@ impl BoardState {
     pub fn new() -> Self {
         let mut board_state = BoardState {
             walls: [[WallOrientation::None; 8]; 8],
+            cell_connections: [[[true; 4]; 9]; 9],
             player_positions: [Vector2::new(4, 0), Vector2::new(4, 8)],
             player_wall_counts: [10; 2],
             player_walls: [[-1; 8]; 8],
             distance_matrices: [[[-1; 9]; 9]; 2],
         };
+        for x in 0..9 {
+            // Block the up direction for the top row.
+            board_state.cell_connections[x][8][UP] = false;
+            // Block the down direction for the bottom row.
+            board_state.cell_connections[x][0][DOWN] = false;
+        }
+        for y in 0..9 {
+            // Block the left direction for the left column.
+            board_state.cell_connections[0][y][LEFT] = false;
+            // Block the right direction for the right column.
+            board_state.cell_connections[8][y][RIGHT] = false;
+        }
         board_state.distance_matrices[0] = board_state.calculate_distance_matrix(8);
-        board_state.distance_matrices[1] = board_state.calculate_distance_matrix(0);
+        board_state.distance_matrices[1] = board_state.calculate_distance_matrix(0);        
         return board_state;
     }
 
@@ -41,7 +59,21 @@ impl BoardState {
     }
 
     pub fn set_wall(&mut self, position: Vector2<isize>, value: WallOrientation) {
-        self.walls[position.x as usize][position.y as usize] = value;
+        let x = position.x as usize;
+        let y = position.y as usize;
+        self.walls[x][y] = value;
+        if value == WallOrientation::Horizontal {
+            self.cell_connections[x][y][UP] = false;
+            self.cell_connections[x][y + 1][DOWN] = false;
+            self.cell_connections[x + 1][y][UP] = false;
+            self.cell_connections[x + 1][y + 1][DOWN] = false;
+        } 
+        else if value == WallOrientation::Vertical {
+            self.cell_connections[x][y][RIGHT] = false;
+            self.cell_connections[x + 1][y][LEFT] = false;
+            self.cell_connections[x][y + 1][RIGHT] = false;
+            self.cell_connections[x + 1][y + 1][LEFT] = false;
+        }
         self.distance_matrices[0] = self.calculate_distance_matrix(8);
         self.distance_matrices[1] = self.calculate_distance_matrix(0);
     }
@@ -64,35 +96,6 @@ impl BoardState {
 
     pub fn set_player_wall_count(&mut self, player_index: usize, value: usize) {
         self.player_wall_counts[player_index] = value;
-    }
-
-    pub fn is_path_blocked(&self, cell: Vector2<isize>, direction: Vector2<isize>) -> bool {
-        let orientation = if direction.y == 0 { WallOrientation::Vertical } else { WallOrientation::Horizontal };
-        for &point in BoardState::get_wall_points(cell, direction).iter() {
-            if BoardState::is_wall_index_in_bounds(point) && self.get_wall(point) == orientation {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    pub fn get_wall_points(cell: Vector2<isize>, direction: Vector2<isize>) -> [Vector2<isize>; 2] {
-        if direction.x == 1 // Right
-        {
-            return [Vector2::new(cell.x, cell.y), Vector2::new(cell.x, cell.y - 1)];
-        }
-        else if direction.x == -1 // Left
-        {
-            return [Vector2::new(cell.x - 1, cell.y - 1), Vector2::new(cell.x - 1, cell.y)];
-        }
-        else if direction.y == 1 // Up
-        {
-            return [Vector2::new(cell.x, cell.y), Vector2::new(cell.x - 1, cell.y)];
-        }
-        else // Down
-        {
-            return [Vector2::new(cell.x - 1, cell.y - 1), Vector2::new(cell.x, cell.y - 1)];
-        }
     }
 
     pub fn is_wall_index_in_bounds(wall: Vector2<isize>) -> bool {
@@ -122,13 +125,13 @@ impl BoardState {
         while !queue.is_empty() {
             let cell = queue.pop_front().unwrap();
             let distance = matrix[cell.x as usize][cell.y as usize];
-            for &direction in DIRECTIONS.iter() {
-                let adjacent_cell = cell + direction;
-                if BoardState::is_cell_index_in_bounds(adjacent_cell) 
-                    && matrix[adjacent_cell.x as usize][adjacent_cell.y as usize] == -1
-                    && !self.is_path_blocked(cell, direction) {
+            for i in 0..4 {
+                if self.cell_connections[cell.x as usize][cell.y as usize][i] {
+                    let adjacent_cell = cell + DIRECTIONS[i];
+                    if matrix[adjacent_cell.x as usize][adjacent_cell.y as usize] == -1 {
                         matrix[adjacent_cell.x as usize][adjacent_cell.y as usize] = distance + 1;
                         queue.push_back(adjacent_cell);
+                    }
                 }
             }
         }

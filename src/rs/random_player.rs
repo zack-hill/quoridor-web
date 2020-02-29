@@ -7,8 +7,7 @@ use crate::wall_orientation::WallOrientation;
 use rand::seq::SliceRandom;
 use rand::{Rng};
 
-pub struct RandomPlayer {
-}
+pub struct RandomPlayer { }
 
 impl RandomPlayer {
     pub fn take_action(board_state: &BoardState, player_index: usize, move_chance: f32) -> Action {

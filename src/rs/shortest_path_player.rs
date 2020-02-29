@@ -6,8 +6,7 @@ use crate::wall_orientation::WallOrientation;
 
 use rand::{Rng};
 
-pub struct ShortestPathPlayer {
-}
+pub struct ShortestPathPlayer { }
 
 impl ShortestPathPlayer {
     pub fn take_action(board_state: &BoardState, player_index: usize, move_chance: f32) -> Action {
@@ -33,7 +32,7 @@ impl ShortestPathPlayer {
                     direction = new_position - old_position;
                 }
                 let orientation = if direction.y == 0 {WallOrientation::Vertical} else {WallOrientation::Horizontal};
-                let wall_points = BoardState::get_wall_points(old_position, direction);
+                let wall_points = get_wall_points(old_position, direction);
                 for i in 0..2  {
                     let action = Action::create_block(wall_points[i], orientation);
                     if validate_action(board_state, player_index, &action) {
@@ -56,4 +55,25 @@ fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix:
         }
     }
     return best_move;
+}
+
+
+
+fn get_wall_points(cell: Vector2<isize>, direction: Vector2<isize>) -> [Vector2<isize>; 2] {
+    if direction.x == 1 // Right
+    {
+        return [Vector2::new(cell.x, cell.y), Vector2::new(cell.x, cell.y - 1)];
+    }
+    else if direction.x == -1 // Left
+    {
+        return [Vector2::new(cell.x - 1, cell.y - 1), Vector2::new(cell.x - 1, cell.y)];
+    }
+    else if direction.y == 1 // Up
+    {
+        return [Vector2::new(cell.x, cell.y), Vector2::new(cell.x - 1, cell.y)];
+    }
+    else // Down
+    {
+        return [Vector2::new(cell.x - 1, cell.y - 1), Vector2::new(cell.x, cell.y - 1)];
+    }
 }
