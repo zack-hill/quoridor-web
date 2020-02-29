@@ -22,7 +22,7 @@ fn main() {
     let mut total_turn_count = 0;
 
     let start = Instant::now();
-    let game_count = 10;
+    let game_count = 20;
     let mut player_1_wins = 0;
 
     println!("Playing {} Games", game_count);
