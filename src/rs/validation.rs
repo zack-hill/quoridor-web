@@ -7,7 +7,7 @@ use crate::wall_orientation::WallOrientation;
 pub fn validate_action(board_state: &BoardState, player_index: usize, action: &Action) -> bool {
     if action.action_type == ActionType::Move {
         // Check if move is to a valid location
-        if !get_valid_player_moves(board_state, player_index).contains(&action.position) {
+        if !get_valid_move_positions(board_state, player_index).contains(&action.position) {
             return false;
         }
     } 
@@ -80,12 +80,12 @@ pub fn get_accessible_adjacent_cells(board_state: &BoardState, cell: Vector2<isi
     return cells;
 }
 
-pub fn get_valid_moves(board_state: &BoardState, from_pos: Vector2<isize>, opponent_pos: Vector2<isize>) -> Vec<Vector2<isize>> {
+pub fn get_accessible_cells(board_state: &BoardState, player_pos: Vector2<isize>, opponent_pos: Vector2<isize>) -> Vec<Vector2<isize>> {
     let mut cells = Vec::new();
-    for position in get_accessible_adjacent_cells(board_state, from_pos) {
+    for position in get_accessible_adjacent_cells(board_state, player_pos) {
         if position == opponent_pos {
-            for jump_pos in get_valid_moves(board_state, opponent_pos, opponent_pos) {
-                if jump_pos != from_pos {
+            for jump_pos in get_accessible_adjacent_cells(board_state, opponent_pos) {
+                if jump_pos != player_pos {
                     cells.push(jump_pos);
                 }
             }
@@ -97,10 +97,39 @@ pub fn get_valid_moves(board_state: &BoardState, from_pos: Vector2<isize>, oppon
     return cells;
 }
 
-pub fn get_valid_player_moves(board_state: &BoardState, player_index: usize) -> Vec<Vector2<isize>> {
+pub fn get_valid_move_positions(board_state: &BoardState, player_index: usize) -> Vec<Vector2<isize>> {
     let player_position = board_state.get_player_position(player_index);
     let opponent_position = board_state.get_player_position(1 - player_index);
-    return get_valid_moves(board_state, player_position, opponent_position);
+    return get_accessible_cells(board_state, player_position, opponent_position);
+}
+
+pub fn get_valid_move_actions(board_state: &BoardState, player_index: usize) -> Vec<Action> {
+    return get_valid_move_positions(board_state, player_index)
+        .iter()
+        .map(|&pos| Action::create_move(pos))
+        .collect();
+}
+
+pub fn get_valid_block_actions(board_state: &BoardState, player_index: usize) -> Vec<Action> {
+    let mut actions = Vec::<Action>::new();
+    if board_state.get_player_wall_count(player_index) > 0 {
+        // For each column
+        for x in 0..8 {
+            // For each row
+            for y in 0..8 {
+                let pos = Vector2::new(x, y);
+                // For each orientation
+                for o in 0..2 {
+                    // If this is a valid place to put a wall.
+                    let orientation = if o == 0 {WallOrientation::Vertical} else {WallOrientation::Horizontal};
+                    if !is_wall_overlapping(&board_state, pos, orientation) {
+                        actions.push(Action::create_block(pos, orientation));
+                    }
+                }
+            }
+        }
+    }
+    return actions;
 }
 
 #[cfg(test)]

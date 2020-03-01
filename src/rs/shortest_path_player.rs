@@ -47,7 +47,7 @@ impl ShortestPathPlayer {
 fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix: &[[isize; 9]; 9]) -> Vector2<isize> {
     let mut best_distance = -1;
     let mut best_move = Vector2::new(-1, -1);
-    for position in get_valid_player_moves(board_state, player_index) {
+    for position in get_valid_move_positions(board_state, player_index) {
         let distance = distance_matrix[position.x as usize][position.y as usize];
         if best_distance == -1 || distance < best_distance {
             best_distance = distance;
@@ -56,8 +56,6 @@ fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix:
     }
     return best_move;
 }
-
-
 
 fn get_wall_points(cell: Vector2<isize>, direction: Vector2<isize>) -> [Vector2<isize>; 2] {
     if direction.x == 1 // Right

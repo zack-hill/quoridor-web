@@ -14,7 +14,7 @@ impl RandomPlayer {
         let mut rng = rand::thread_rng();
         loop {
             if rng.gen::<f32>() < move_chance || board_state.get_player_wall_count(player_index) == 0 {
-                let valid_moves = get_valid_player_moves(board_state, player_index);
+                let valid_moves = get_valid_move_positions(board_state, player_index);
                 let rand_move = valid_moves.choose(&mut rng).unwrap();
                 let action = Action::create_move(*rand_move);
                 return action;

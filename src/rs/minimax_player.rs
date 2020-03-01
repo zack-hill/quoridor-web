@@ -1,8 +1,6 @@
 use crate::action::Action;
 use crate::board_state::BoardState;
 use crate::validation::*;
-use crate::vector2::Vector2;
-use crate::wall_orientation::WallOrientation;
 
 use std::f32;
 
@@ -45,27 +43,8 @@ impl<'a> MinimaxBoardNode<'a> {
         }
 
         let mut valid_actions = Vec::<Action>::new();
-        for valid_move in get_valid_player_moves(&self.board_state, self.player_index) {
-            valid_actions.push(Action::create_move(valid_move));
-        }
-
-        if self.board_state.get_player_wall_count(self.player_index) > 0 {
-            // For each column
-            for x in 0..8 {
-                // For each row
-                for y in 0..8 {
-                    let pos = Vector2::new(x, y);
-                    // For each orientation
-                    for o in 0..2 {
-                        // If this is a valid place to put a wall.
-                        let orientation = if o == 0 {WallOrientation::Vertical} else {WallOrientation::Horizontal};
-                        if !is_wall_overlapping(&self.board_state, pos, orientation) {
-                            valid_actions.push(Action::create_block(pos, orientation));
-                        }
-                    }
-                }
-            }
-        }
+        valid_actions.append(&mut get_valid_move_actions(&self.board_state, self.player_index));
+        valid_actions.append(&mut get_valid_block_actions(&self.board_state, self.player_index));
 
         let mut a = alpha;
         let mut b = beta;

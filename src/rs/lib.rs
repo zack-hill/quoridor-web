@@ -14,6 +14,7 @@ use crate::minimax_player::MinimaxPlayer;
 use crate::random_player::RandomPlayer;
 use crate::shortest_path_player::ShortestPathPlayer;
 use crate::vector2::Vector2;
+use crate::validation::*;
 use crate::wall_orientation::WallOrientation;
 
 use std::sync::Mutex;
@@ -75,6 +76,15 @@ pub fn take_minimax_turn(player_index: usize, branch_depth: usize) -> String {
     let action = MinimaxPlayer::take_action(&board_state, player_index, branch_depth);
     action.apply(board_state, player_index);
     return String::from(serde_json::to_string(&action).unwrap());
+}
+
+#[wasm_bindgen]
+pub fn get_valid_actions(player_index: usize) -> String {
+    let board_state = &mut BOARD_STATE.lock().unwrap();
+    let mut valid_actions = Vec::<Action>::new();
+    valid_actions.append(&mut get_valid_move_actions(&board_state, player_index));
+    valid_actions.append(&mut get_valid_block_actions(&board_state, player_index));
+    return String::from(serde_json::to_string(&valid_actions).unwrap());
 }
 
 #[wasm_bindgen]
