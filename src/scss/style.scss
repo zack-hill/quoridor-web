@@ -44,6 +44,48 @@ select {
 
 #board {
   margin: 20px 0;
+
+  $cell-size: 60px;
+  $wall-thickness: 5px;
+  $wall-color: darkgray;
+
+  .board-cell {
+    width: $cell-size;
+    height: $cell-size;
+    background-color: #fafafa;
+  }
+  .board-hor-wall {
+    width: $cell-size;
+    height: $wall-thickness;
+    background-color: $wall-color;
+  }
+  .board-ver-wall {
+    width: $wall-thickness;
+    height: $cell-size;
+    background-color: $wall-color;
+  }
+  .board-spacer {
+    width: $wall-thickness;
+    height: $wall-thickness;
+    background-color: $wall-color;
+  }
+
+  .player {
+    width: 50%;
+    height: 50%;
+    margin: auto;
+    &:hover {
+      background: yellow;
+    }
+  }
+
+  .player-1 {
+    background: blue;
+  }
+
+  .player-2 {
+    background: red;
+  }
 }
 
 #turns-wrapper-panel {
@@ -65,9 +107,7 @@ select {
   width: 100%;
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
-}
 
-#turns-panel {
   tr {
     display: inline-block;
     width: 100%;
@@ -84,11 +124,11 @@ select {
     overflow-y: auto;
     margin: 0;
     table-layout: fixed;
-  }
-}
 
-table td:last-child {
-  width: 100%;
+    td:last-child {
+      width: 100%;
+    }
+  }
 }
 
 .unselectable {

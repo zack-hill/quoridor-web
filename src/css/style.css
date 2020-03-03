@@ -35,6 +35,32 @@ select {
 
 #board {
   margin: 20px 0; }
+  #board .board-cell {
+    width: 60px;
+    height: 60px;
+    background-color: #fafafa; }
+  #board .board-hor-wall {
+    width: 60px;
+    height: 5px;
+    background-color: darkgray; }
+  #board .board-ver-wall {
+    width: 5px;
+    height: 60px;
+    background-color: darkgray; }
+  #board .board-spacer {
+    width: 5px;
+    height: 5px;
+    background-color: darkgray; }
+  #board .player {
+    width: 50%;
+    height: 50%;
+    margin: auto; }
+    #board .player:hover {
+      background: yellow; }
+  #board .player-1 {
+    background: blue; }
+  #board .player-2 {
+    background: red; }
 
 #turns-wrapper-panel {
   height: 90%;
@@ -54,24 +80,20 @@ select {
   width: 100%;
   border-top-left-radius: 0px;
   border-top-right-radius: 0px; }
-
-#turns-panel tr {
-  display: inline-block;
-  width: 100%; }
-
-#turns-panel tbody {
-  display: inline-block; }
-
-#turns-panel table {
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  display: inline-block;
-  overflow-y: auto;
-  margin: 0;
-  table-layout: fixed; }
-
-table td:last-child {
-  width: 100%; }
+  #turns-panel tr {
+    display: inline-block;
+    width: 100%; }
+  #turns-panel tbody {
+    display: inline-block; }
+  #turns-panel table {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    display: inline-block;
+    overflow-y: auto;
+    margin: 0;
+    table-layout: fixed; }
+    #turns-panel table td:last-child {
+      width: 100%; }
 
 .unselectable {
   -webkit-touch-callout: none;

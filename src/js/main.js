@@ -1,5 +1,5 @@
 import init, * as Quoridor from "../../pkg/quoridor.js";
-import * as Rendering from "./rendering.js";
+import * as Board from "./board.js";
 
 var turnDelay;
 var isPlaying;
@@ -227,7 +227,7 @@ function redraw() {
     }
 
     let boardState = turns[currentTurnNumber];
-    Rendering.setBoardState(boardState);
-    Rendering.render();
+    Board.setBoardState(boardState);
+    Board.render();
 }
 
