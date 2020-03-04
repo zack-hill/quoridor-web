@@ -36,6 +36,11 @@ select {
 #board {
   margin: 20px 0; }
 
+board {
+  width: 100px;
+  height: 100px;
+  background-color: red; }
+
 #turns-wrapper-panel {
   height: 90%;
   -webkit-box-sizing: border-box;

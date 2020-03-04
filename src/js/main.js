@@ -1,5 +1,6 @@
 import init, * as Quoridor from "../../pkg/quoridor.js";
 import * as Rendering from "./rendering.js";
+import {Board} from "./board.js";
 
 var turnDelay;
 var isPlaying;
@@ -19,22 +20,28 @@ async function initializeWasm() {
 }
 initializeWasm();
 
-function onLoad() {    
-    turnDelay = document.getElementById("turn-delay-value").value;
+function onLoad() {
+    customElements.define('board', Board);
 
+    turnDelay = document.getElementById("turn-delay-value").value;
+    
+    // Defaults
+    document.getElementById("select-player1").value = "human";
+    document.getElementById("select-player2").value = "shortest-path";
+    // document.getElementById("select-matrix-mode").value = "distance";
+    // document.getElementById("select-matrix-text").value = "player1";
+
+    // Events
     document.getElementById("btn-play").addEventListener("click", function() { setIsPlaying(true) });
     document.getElementById("btn-pause").addEventListener("click", function() { setIsPlaying(false) });
     document.getElementById("btn-reset").addEventListener("click", resetGame);
-    document.getElementById("btn-beginning").addEventListener("click", onJumpToBeginning);
-    document.getElementById("btn-back").addEventListener("click", onBack);
+    document.getElementById("btn-beginning").addEventListener("click", function() { onJumpToTurn(0) });
+    document.getElementById("btn-back").addEventListener("click", function() { onJumpToTurn(currentTurnNumber - 1) });
     document.getElementById("btn-forward").addEventListener("click", onForward);
-    document.getElementById("btn-end").addEventListener("click", onJumpToEnd);
-    document.getElementById("select-player1").value = "minimax-2";
-    document.getElementById("select-player2").value = "shortest-path";
+    document.getElementById("btn-end").addEventListener("click", function() { onJumpToTurn(turns.length - 1) });
     document.getElementById("select-matrix-mode").addEventListener("change", redraw);
     document.getElementById("select-matrix-player").addEventListener("change", redraw);
     document.getElementById("select-matrix-text").addEventListener("change", redraw);
-
     document.getElementById("turn-delay-slider").addEventListener("change", onDelayChange);
     document.getElementById("turn-delay-slider").addEventListener("input", onDelayChange);
     document.getElementById("turn-delay-value").addEventListener("change", onDelayChange);
@@ -83,21 +90,6 @@ function onJumpToTurn(turnNumber) {
     redraw();
 }
 
-function onJumpToBeginning() {
-    onJumpToTurn(0);
-}
-
-function onJumpToEnd() {
-    onJumpToTurn(turns.length - 1);
-}
-
-function onBack() {
-    if (currentTurnNumber == 0) {
-        return;
-    }
-    onJumpToTurn(currentTurnNumber - 1);
-}
-
 function onForward() {
     if (currentTurnNumber == turns.length - 1) {
         if (Quoridor.is_game_over()) {
@@ -136,7 +128,10 @@ function take_turn() {
         : document.getElementById("select-player2").value;
 
     let actionJson = null;
-    if (player.startsWith("minimax")) {
+    if (player.startsWith("human")) {
+        Rendering.setValidActions(JSON.parse(Quoridor.get_valid_actions(playerIndex)));
+    }
+    else if (player.startsWith("minimax")) {
         let depth = 0;
         if (player.endsWith("1")) {
             depth = 1;
@@ -225,7 +220,6 @@ function redraw() {
     if (!wasmInitialized || !loaded) {
         return;
     }
-
     let boardState = turns[currentTurnNumber];
     Rendering.setBoardState(boardState);
     Rendering.render();

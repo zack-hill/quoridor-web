@@ -1,7 +1,25 @@
 let boardState = null;
+let validMovePositions = Array.from(Array(9), () => new Array(9).fill(false));
+let validHorizontalBlockPositions = Array.from(Array(8), () => new Array(8).fill(false));
+let validVerticalBlockPositions = Array.from(Array(8), () => new Array(8).fill(false));
+let mouseX = null;
+let mouseY = null;
+let showPossibleMoves = true;
 
 export function setBoardState(newBoardState) {
     boardState = newBoardState;
+}
+
+export function setValidActions(validActions) {
+    validMovePositions = Array.from(Array(9), () => new Array(9).fill(false));
+    validHorizontalBlockPositions = Array.from(Array(8), () => new Array(8).fill(false));
+    validVerticalBlockPositions = Array.from(Array(8), () => new Array(8).fill(false));
+
+    for (let action of validActions) {
+        if (action.action_type == "Move") {
+            validMovePositions[action.position.x][action.position.y] = true;
+        }
+    }
 }
 
 export function render() {
@@ -12,14 +30,38 @@ export function render() {
     drawDistanceMeter();
 }
 
-window.addEventListener("DOMContentLoaded", resizeBoardCanvas);
+window.addEventListener("DOMContentLoaded", loaded);
 window.addEventListener("resize", resizeBoardCanvas);
+
+function loaded() {
+    let canvas = document.getElementById("board");
+    canvas.addEventListener("mousemove", onMouseMove)
+    canvas.addEventListener("mouseout", onMouseOut)
+    resizeBoardCanvas();
+}
 
 function resizeBoardCanvas() {
     let canvas = document.getElementById("board");
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientWidth;
     render();
+}
+
+function onMouseMove(e) {
+    var rect = e.target.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+    if (showPossibleMoves) {
+        drawBoard();
+    }
+}
+
+function onMouseOut() {
+    mouseX = null;
+    mouseY = null;
+    if (showPossibleMoves) {
+        drawBoard();
+    }
 }
 
 function drawLine(ctx, x1, y1, x2, y2) {
@@ -33,6 +75,16 @@ function drawRect(ctx, x, y, w, h) {
     ctx.beginPath();
     ctx.rect(x, y, w, h);
     ctx.fill();
+}
+
+function isMouseInBox(x, y, w, h) {
+    if (mouseX > x && 
+        mouseX < x + w &&
+        mouseY > y &&
+        mouseY < y + h) {
+        return true;
+    }
+    return false
 }
 
 function drawBoard() {
@@ -50,12 +102,30 @@ function drawBoard() {
     let debugMatrixPlayerIndex = matrixPlayer == "player1" ? 0 : 1;
     let showPlayer1Text = matrixText == "player1" || matrixText == "both";
     let showPlayer2Text = matrixText == "player2" || matrixText == "both";
-
-    var ctx = canvas.getContext("2d");
+    
+    let ctx = canvas.getContext("2d");
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.imageSmoothingEnabled = true;
+
+    if (showPossibleMoves) {
+        for (let y = 0; y < 9; y++) {
+            for (let x = 0; x < 9; x++) {
+                if (validMovePositions[x][y]) {
+                    let offsetX = cellWidth * x;
+                    let offsetY = cellHeight * (8 - y);
+                    if (isMouseInBox(offsetX, offsetY, cellWidth, cellHeight)) {
+                        let p1_x = Math.floor(boardState.player_positions[0].x * cellWidth + cellWidth / 4);
+                        let p1_y = Math.floor((8 - boardState.player_positions[0].y) * cellHeight + cellHeight / 4);
+                        drawRect(ctx, p1_x, p1_y, cellWidth / 2, cellHeight / 2)
+                        ctx.fillStyle = "yellow";
+                        drawRect(ctx, offsetX, offsetY, cellWidth, cellHeight)
+                    }
+                }
+            }
+        }
+    }    
 
     if (showDebugMatrix) {
         let debugMatrix = boardState.distance_matrices[debugMatrixPlayerIndex];
@@ -139,14 +209,14 @@ function drawBoard() {
     drawRect(ctx, p2_x, p2_y, cellWidth / 2, cellHeight / 2)
 
     // Draw walls        
-    ctx.lineWidth = wallWidth;
     for (var y = 0; y < 8; y++) {
         for (var x = 0; x < 8; x++) {
+            var centerX = Math.floor((x + 1) * cellWidth);
+            var centerY = Math.floor((8 - y) * cellHeight);
             var orientation = boardState.walls[x][y];
             if (orientation != "None") {
+                ctx.lineWidth = wallWidth;
                 let playerIndex = boardState.player_walls[x][y]; 
-                var centerX = Math.floor((x + 1) * cellWidth);
-                var centerY = Math.floor((8 - y) * cellHeight);
                 if (playerIndex == 0) {
                     ctx.strokeStyle = "#0000FF";
                 } else {
@@ -156,6 +226,16 @@ function drawBoard() {
                     drawLine(ctx, centerX, centerY - cellHeight, centerX, centerY + cellHeight);
                 } else if (orientation == "Horizontal") {
                     drawLine(ctx, centerX - cellWidth, centerY, centerX + cellWidth, centerY);
+                }
+            } else if (showPossibleMoves) {
+                ctx.lineWidth = wallWidth * 2;
+                if (validHorizontalBlockPositions[x][y] && isMouseInBox(centerX - cellWidth / 2, centerY - wallWidth, cellWidth, wallWidth * 2)) {
+                    ctx.strokeStyle = "orange";
+                    drawLine(ctx, centerX - cellWidth, centerY, centerX + cellWidth, centerY);                
+                }
+                else if (validVerticalBlockPositions[x][y] && isMouseInBox(centerX - wallWidth, centerY - cellHeight / 2, wallWidth * 2, cellHeight)) {
+                    ctx.strokeStyle = "orange";
+                    drawLine(ctx, centerX, centerY - cellHeight, centerX, centerY + cellHeight);
                 }
             }
         }
