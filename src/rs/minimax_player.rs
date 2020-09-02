@@ -58,8 +58,7 @@ impl<'a> MinimaxBoardNode<'a> {
         let mut best_action_index = 0;
         let mut turn_play_count = 1;
         for (i, &action) in valid_actions.iter().enumerate() {
-            let mut new_board_state = self.board_state.clone();
-            action.apply(&mut new_board_state, self.player_index);
+            let mut new_board_state = self.board_state.from_action(&action, self.player_index);
             if !is_either_player_trapped(&new_board_state) {
                 let mut child_node = MinimaxBoardNode::new(&new_board_state, 1 - self.player_index);
                 turn_play_count += child_node.build_children(branch_depth - 1, scoring_player, !maximizing, a, b);

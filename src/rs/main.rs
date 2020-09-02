@@ -1,5 +1,4 @@
 mod action;
-mod action_type;
 mod board_state;
 mod minimax_player;
 mod random_player;

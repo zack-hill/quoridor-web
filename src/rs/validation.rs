@@ -1,46 +1,23 @@
 use crate::action::Action;
-use crate::action_type::ActionType;
 use crate::board_state::{BoardState, DIRECTIONS};
 use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
 pub fn validate_action(board_state: &BoardState, player_index: usize, action: &Action) -> bool {
-    if action.action_type == ActionType::Move {
-        // Check if move is to a valid location
-        if !get_valid_move_positions(board_state, player_index).contains(&action.position) {
-            return false;
-        }
-    } else {
-        // Player has enough walls
-        if board_state.get_player_wall_count(player_index) == 0 {
-            return false;
-        }
-
-        // Wall is within bounds
-        if !BoardState::is_wall_index_in_bounds(action.position) {
-            return false;
-        }
-
-        // Wall is not on top of another wall
-        if is_wall_overlapping(&board_state, action.position, action.orientation) {
-            return false;
-        }
-
-        // Clone the board_state so we don't mutate the one passed in
-        let mut copy = board_state.clone();
-        action.apply(&mut copy, player_index);
-
-        // A player is not boxed in
-        if is_either_player_trapped(&copy) {
-            return false;
+    match action {
+        Action::Move(position) => get_valid_move_positions(board_state, player_index).contains(&position),
+        Action::Block(position, orientation) => {
+            !board_state.get_player_wall_count(player_index) == 0
+                && BoardState::is_wall_index_in_bounds(*position)
+                && !is_wall_overlapping(&board_state, *position, *orientation)
+                && !is_either_player_trapped(&board_state.from_action(&action, player_index))
         }
     }
-    return true;
 }
 
 pub fn is_wall_overlapping(board_state: &BoardState, position: Vector2<isize>, orientation: WallOrientation) -> bool {
     // Wall is not on top of another wall
-    if board_state.get_wall(position) != WallOrientation::None {
+    if board_state.get_wall(position) != None {
         return true;
     }
 
@@ -52,14 +29,22 @@ pub fn is_wall_overlapping(board_state: &BoardState, position: Vector2<isize>, o
 
     // Wall is not directly next to another wall of the same orientation
     let point_a = position + shift_amount;
-    if BoardState::is_wall_index_in_bounds(point_a) && board_state.get_wall(point_a) == orientation {
-        return true;
+    if BoardState::is_wall_index_in_bounds(point_a) {
+        if let Some(o) = board_state.get_wall(point_a) {
+            if o == orientation {
+                return false;
+            }
+        }
     }
 
     // Wall is not directly next to another wall of the same orientation
     let point_b = position - shift_amount;
-    if BoardState::is_wall_index_in_bounds(point_b) && board_state.get_wall(point_b) == orientation {
-        return true;
+    if BoardState::is_wall_index_in_bounds(point_b) {
+        if let Some(o) = board_state.get_wall(point_b) {
+            if o == orientation {
+                return false;
+            }
+        }
     }
 
     return false;
@@ -112,7 +97,7 @@ pub fn get_valid_move_positions(board_state: &BoardState, player_index: usize) -
 pub fn get_valid_move_actions(board_state: &BoardState, player_index: usize) -> Vec<Action> {
     return get_valid_move_positions(board_state, player_index)
         .iter()
-        .map(|&pos| Action::create_move(pos))
+        .map(|&pos| Action::Move(pos))
         .collect();
 }
 
@@ -133,7 +118,7 @@ pub fn get_valid_block_actions(board_state: &BoardState, player_index: usize) ->
                         WallOrientation::Horizontal
                     };
                     if !is_wall_overlapping(&board_state, pos, orientation) {
-                        actions.push(Action::create_block(pos, orientation));
+                        actions.push(Action::Block(pos, orientation));
                     }
                 }
             }
@@ -185,7 +170,7 @@ mod tests {
     #[test]
     fn validate_action_move_is_invalid() {
         let board_state = BoardState::new();
-        let action = Action::create_move(Vector2::new(6, 0));
+        let action = Action::Move(Vector2::new(6, 0));
 
         assert_eq!(false, validate_action(&board_state, 0, &action));
     }
@@ -194,7 +179,7 @@ mod tests {
     fn validate_action_player_has_no_walls() {
         let mut board_state = BoardState::new();
         board_state.set_player_wall_count(0, 0);
-        let action = Action::create_block(Vector2::new(0, 0), WallOrientation::Horizontal);
+        let action = Action::Block(Vector2::new(0, 0), WallOrientation::Horizontal);
 
         assert_eq!(false, validate_action(&board_state, 0, &action));
     }
@@ -202,7 +187,7 @@ mod tests {
     #[test]
     fn validate_action_wall_is_out_of_bounds() {
         let board_state = BoardState::new();
-        let action = Action::create_block(Vector2::new(-1, 0), WallOrientation::Horizontal);
+        let action = Action::Block(Vector2::new(-1, 0), WallOrientation::Horizontal);
 
         assert_eq!(false, validate_action(&board_state, 0, &action));
     }
@@ -211,7 +196,7 @@ mod tests {
     fn validate_action_wall_is_overlapping() {
         let mut board_state = BoardState::new();
         board_state.set_wall(Vector2::new(3, 7), WallOrientation::Horizontal);
-        let action = Action::create_block(Vector2::new(3, 7), WallOrientation::Horizontal);
+        let action = Action::Block(Vector2::new(3, 7), WallOrientation::Horizontal);
 
         assert_eq!(false, validate_action(&board_state, 0, &action));
     }
@@ -220,7 +205,7 @@ mod tests {
     fn validate_action_wall_is_partially_overlapping() {
         let mut board_state = BoardState::new();
         board_state.set_wall(Vector2::new(4, 7), WallOrientation::Horizontal);
-        let action = Action::create_block(Vector2::new(3, 7), WallOrientation::Horizontal);
+        let action = Action::Block(Vector2::new(3, 7), WallOrientation::Horizontal);
 
         assert_eq!(false, validate_action(&board_state, 0, &action));
     }
@@ -230,7 +215,7 @@ mod tests {
         let mut board_state = BoardState::new();
         board_state.set_wall(Vector2::new(3, 0), WallOrientation::Horizontal);
         board_state.set_wall(Vector2::new(2, 0), WallOrientation::Vertical);
-        let action = Action::create_block(Vector2::new(4, 0), WallOrientation::Vertical);
+        let action = Action::Block(Vector2::new(4, 0), WallOrientation::Vertical);
 
         assert_eq!(false, validate_action(&board_state, 0, &action));
     }
@@ -240,7 +225,7 @@ mod tests {
         let mut board_state = BoardState::new();
         board_state.set_wall(Vector2::new(3, 7), WallOrientation::Horizontal);
         board_state.set_wall(Vector2::new(2, 7), WallOrientation::Vertical);
-        let action = Action::create_block(Vector2::new(4, 7), WallOrientation::Vertical);
+        let action = Action::Block(Vector2::new(4, 7), WallOrientation::Vertical);
 
         assert_eq!(false, validate_action(&board_state, 0, &action));
     }
@@ -251,7 +236,7 @@ mod tests {
         board_state.set_wall(Vector2::new(3, 0), WallOrientation::Horizontal);
         board_state.set_wall(Vector2::new(2, 0), WallOrientation::Vertical);
 
-        let valid_moves = get_valid_player_moves(&board_state, 0);
+        let valid_moves = get_valid_move_positions(&board_state, 0);
 
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 0)));
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(5, 0)));
@@ -262,7 +247,7 @@ mod tests {
         let mut board_state = BoardState::new();
         board_state.set_player_position(0, Vector2::new(3, 3));
 
-        let valid_moves = get_valid_player_moves(&board_state, 0);
+        let valid_moves = get_valid_move_positions(&board_state, 0);
 
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 2)));
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 4)));
@@ -277,7 +262,7 @@ mod tests {
         board_state.set_player_position(0, Vector2::new(3, 3));
         board_state.set_player_position(1, Vector2::new(3, 4));
 
-        let valid_moves = get_valid_player_moves(&board_state, 0);
+        let valid_moves = get_valid_move_positions(&board_state, 0);
 
         // 3 normal moves
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 2)));
@@ -297,7 +282,7 @@ mod tests {
         board_state.set_player_position(1, Vector2::new(3, 4));
         board_state.set_wall(Vector2::new(2, 4), WallOrientation::Horizontal);
 
-        let valid_moves = get_valid_player_moves(&board_state, 0);
+        let valid_moves = get_valid_move_positions(&board_state, 0);
 
         // 3 normal moves
         assert_eq!(true, valid_moves.iter().any(|x| *x == Vector2::new(3, 2)));

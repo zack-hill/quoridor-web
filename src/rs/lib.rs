@@ -1,5 +1,4 @@
 mod action;
-mod action_type;
 mod board_state;
 mod minimax_player;
 mod random_player;
@@ -89,7 +88,7 @@ pub fn get_valid_actions(player_index: usize) -> String {
 
 #[wasm_bindgen]
 pub fn apply_move_action(x: isize, y: isize, player_index: usize) -> String {
-    let action = Action::create_move(Vector2::new(x, y));
+    let action = Action::Move(Vector2::new(x, y));
     let board_state = &mut BOARD_STATE.lock().unwrap();
     action.apply(board_state, player_index);
     return String::from(serde_json::to_string(&action).unwrap());
@@ -102,7 +101,7 @@ pub fn apply_block_action(x: isize, y: isize, orientation: usize, player_index: 
     } else {
         WallOrientation::Vertical
     };
-    let action = Action::create_block(Vector2::new(x, y), wall_orientation);
+    let action = Action::Block(Vector2::new(x, y), wall_orientation);
     let board_state = &mut BOARD_STATE.lock().unwrap();
     action.apply(board_state, player_index);
     return String::from(serde_json::to_string(&action).unwrap());

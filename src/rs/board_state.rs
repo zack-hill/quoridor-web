@@ -1,3 +1,4 @@
+use crate::action::Action;
 use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
@@ -19,7 +20,7 @@ lazy_static! {
 
 #[derive(Copy, Clone, Serialize)]
 pub struct BoardState {
-    pub walls: [[WallOrientation; 8]; 8],
+    pub walls: [[Option<WallOrientation>; 8]; 8],
     pub cell_connections: [[[bool; 4]; 9]; 9],
     pub player_positions: [Vector2<isize>; 2],
     pub player_wall_counts: [usize; 2],
@@ -30,7 +31,7 @@ pub struct BoardState {
 impl BoardState {
     pub fn new() -> Self {
         let mut board_state = BoardState {
-            walls: [[WallOrientation::None; 8]; 8],
+            walls: [[None; 8]; 8],
             cell_connections: [[[true; 4]; 9]; 9],
             player_positions: [Vector2::new(4, 0), Vector2::new(4, 8)],
             player_wall_counts: [10; 2],
@@ -54,14 +55,20 @@ impl BoardState {
         return board_state;
     }
 
-    pub fn get_wall(&self, position: Vector2<isize>) -> WallOrientation {
-        return self.walls[position.x as usize][position.y as usize];
+    pub fn from_action(&self, action: &Action, player_index: usize) -> Self {
+        let mut copy = self.clone();
+        action.apply(&mut copy, player_index);
+        return copy;
+    }
+
+    pub fn get_wall(&self, position: Vector2<isize>) -> Option<WallOrientation> {
+        self.walls[position.x as usize][position.y as usize]
     }
 
     pub fn set_wall(&mut self, position: Vector2<isize>, value: WallOrientation) {
         let x = position.x as usize;
         let y = position.y as usize;
-        self.walls[x][y] = value;
+        self.walls[x][y] = Some(value);
         if value == WallOrientation::Horizontal {
             self.cell_connections[x][y][UP] = false;
             self.cell_connections[x][y + 1][DOWN] = false;
@@ -164,8 +171,8 @@ impl BoardState {
         // cells across the wall from one another. If the distances are the same, the wall placement will not affect
         // their values. If the cells have different distance values, the cell with the larger value will potentially
         // be affected by the wall and it is added to the downstream queue.
-        let wall_orientation = self.walls[new_wall.x as usize][new_wall.y as usize];
-        if wall_orientation == WallOrientation::Horizontal {
+        let wall_orientation = self.get_wall(new_wall);
+        if wall_orientation == Some(WallOrientation::Horizontal) {
             // Left
             if bottom_left_distance > top_left_distance {
                 downstream.push_back(bottom_left);
@@ -178,7 +185,7 @@ impl BoardState {
             } else if top_right_distance > bottom_right_distance {
                 downstream.push_back(top_right);
             }
-        } else if wall_orientation == WallOrientation::Vertical {
+        } else if wall_orientation == Some(WallOrientation::Vertical) {
             // Top
             if top_left_distance > top_right_distance {
                 downstream.push_back(top_left);
@@ -258,7 +265,7 @@ mod tests {
         let mut board_state = BoardState::new();
         board_state.set_wall(pos, expected);
 
-        assert_eq!(expected, board_state.get_wall(pos));
+        assert_eq!(Some(expected), board_state.get_wall(pos));
     }
 
     #[test]

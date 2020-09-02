@@ -16,7 +16,7 @@ impl RandomPlayer {
             if rng.gen::<f32>() < move_chance || board_state.get_player_wall_count(player_index) == 0 {
                 let valid_moves = get_valid_move_positions(board_state, player_index);
                 let rand_move = valid_moves.choose(&mut rng).unwrap();
-                let action = Action::create_move(*rand_move);
+                let action = Action::Move(*rand_move);
                 return action;
             } else {
                 let position = Vector2::new(rng.gen_range(0, 8), rng.gen_range(0, 8));
@@ -25,7 +25,7 @@ impl RandomPlayer {
                 } else {
                     WallOrientation::Vertical
                 };
-                let action = Action::create_block(position, orientation);
+                let action = Action::Block(position, orientation);
                 if validate_action(board_state, player_index, &action) {
                     return action;
                 }

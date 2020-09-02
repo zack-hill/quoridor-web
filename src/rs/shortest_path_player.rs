@@ -16,7 +16,7 @@ impl ShortestPathPlayer {
                 // Move along shortest path
                 let distance_matrix = board_state.get_distance_matrix(player_index);
                 let best_move = get_best_move(board_state, player_index, &distance_matrix);
-                return Action::create_move(best_move);
+                return Action::Move(best_move);
             } else {
                 // Block along opponent's shortest path
                 let opp_index = 1 - player_index;
@@ -37,7 +37,7 @@ impl ShortestPathPlayer {
                 };
                 let wall_points = get_wall_points(old_position, direction);
                 for i in 0..2 {
-                    let action = Action::create_block(wall_points[i], orientation);
+                    let action = Action::Block(wall_points[i], orientation);
                     if validate_action(board_state, player_index, &action) {
                         return action;
                     }
@@ -46,6 +46,7 @@ impl ShortestPathPlayer {
         }
     }
 }
+
 fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix: &[[isize; 9]; 9]) -> Vector2<isize> {
     let mut best_distance = -1;
     let mut best_move = Vector2::new(-1, -1);
