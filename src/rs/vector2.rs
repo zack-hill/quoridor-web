@@ -1,6 +1,6 @@
-use std::fmt::{Display, Formatter, Result};
-use std::ops::{Add, Sub, Mul};
 use serde::Serialize;
+use std::fmt::{Display, Formatter, Result};
+use std::ops::{Add, Mul, Sub};
 
 #[derive(Copy, Clone, Debug, PartialEq, Serialize)]
 pub struct Vector2<T> {
@@ -8,12 +8,13 @@ pub struct Vector2<T> {
     pub y: T,
 }
 
-impl<T> Vector2<T> where T: Copy + Mul, <T as Mul>::Output: Add<Output=T> {
+impl<T> Vector2<T>
+where
+    T: Copy + Mul,
+    <T as Mul>::Output: Add<Output = T>,
+{
     pub fn new(x: T, y: T) -> Self {
-        Vector2 {
-            x,
-            y,
-        }
+        Vector2 { x, y }
     }
 
     pub fn magnitude_squared(&self) -> T {
@@ -32,7 +33,7 @@ impl<T: Add<Output = T>> Add for Vector2<T> {
     fn add(self, rhs: Vector2<T>) -> Self {
         return Vector2 {
             x: self.x + rhs.x,
-            y: self.y + rhs.y
+            y: self.y + rhs.y,
         };
     }
 }
@@ -42,7 +43,7 @@ impl<T: Sub<Output = T>> Sub for Vector2<T> {
     fn sub(self, rhs: Vector2<T>) -> Self {
         return Vector2 {
             x: self.x - rhs.x,
-            y: self.y - rhs.y
+            y: self.y - rhs.y,
         };
     }
 }

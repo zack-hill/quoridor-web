@@ -5,9 +5,9 @@ use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
 use rand::seq::SliceRandom;
-use rand::{Rng};
+use rand::Rng;
 
-pub struct RandomPlayer { }
+pub struct RandomPlayer {}
 
 impl RandomPlayer {
     pub fn take_action(board_state: &BoardState, player_index: usize, move_chance: f32) -> Action {
@@ -18,10 +18,13 @@ impl RandomPlayer {
                 let rand_move = valid_moves.choose(&mut rng).unwrap();
                 let action = Action::create_move(*rand_move);
                 return action;
-            }
-            else {
+            } else {
                 let position = Vector2::new(rng.gen_range(0, 8), rng.gen_range(0, 8));
-                let orientation = if rng.gen_bool(0.5) == true {WallOrientation::Horizontal} else {WallOrientation::Vertical};
+                let orientation = if rng.gen_bool(0.5) == true {
+                    WallOrientation::Horizontal
+                } else {
+                    WallOrientation::Vertical
+                };
                 let action = Action::create_block(position, orientation);
                 if validate_action(board_state, player_index, &action) {
                     return action;

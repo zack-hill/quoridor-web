@@ -1,5 +1,5 @@
-use std::fmt;
 use serde::Serialize;
+use std::fmt;
 
 #[derive(Copy, Clone, Debug, PartialEq, Serialize)]
 pub enum WallOrientation {
@@ -14,6 +14,6 @@ impl fmt::Display for WallOrientation {
             WallOrientation::None => write!(f, "None"),
             WallOrientation::Vertical => write!(f, "Vertical"),
             WallOrientation::Horizontal => write!(f, "Horizontal"),
-        }        
+        }
     }
 }

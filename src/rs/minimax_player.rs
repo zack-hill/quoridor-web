@@ -4,10 +4,10 @@ use crate::validation::*;
 
 use std::f32;
 
-pub struct MinimaxPlayer { }
+pub struct MinimaxPlayer {}
 
 impl MinimaxPlayer {
-    pub fn take_action(board_state: &BoardState, player_index: usize, branch_depth: usize) -> Action {        
+    pub fn take_action(board_state: &BoardState, player_index: usize, branch_depth: usize) -> Action {
         let mut node = MinimaxBoardNode::new(board_state, player_index);
         let _turn_play_count = node.build_children(branch_depth, player_index, true, f32::MIN, f32::MAX);
         return node.best_action.unwrap();
@@ -22,7 +22,6 @@ struct MinimaxBoardNode<'a> {
 }
 
 impl<'a> MinimaxBoardNode<'a> {
-
     pub fn new(board_state: &'a BoardState, player_index: usize) -> Self {
         MinimaxBoardNode {
             board_state: board_state,
@@ -32,7 +31,14 @@ impl<'a> MinimaxBoardNode<'a> {
         }
     }
 
-    pub fn build_children(&mut self, branch_depth: usize, scoring_player: usize, maximizing: bool, alpha: f32, beta: f32) -> usize {
+    pub fn build_children(
+        &mut self,
+        branch_depth: usize,
+        scoring_player: usize,
+        maximizing: bool,
+        alpha: f32,
+        beta: f32,
+    ) -> usize {
         let opp_index = 1 - scoring_player;
         let opp_distance = self.board_state.get_player_distance(opp_index);
         let player_distance = self.board_state.get_player_distance(scoring_player);
@@ -48,7 +54,7 @@ impl<'a> MinimaxBoardNode<'a> {
 
         let mut a = alpha;
         let mut b = beta;
-        let mut score = if maximizing {f32::MIN} else {f32::MAX};
+        let mut score = if maximizing { f32::MIN } else { f32::MAX };
         let mut best_action_index = 0;
         let mut turn_play_count = 1;
         for (i, &action) in valid_actions.iter().enumerate() {
@@ -63,11 +69,10 @@ impl<'a> MinimaxBoardNode<'a> {
                         best_action_index = i;
                     }
                     a = f32::max(a, score);
-                    if a >= b {     
+                    if a >= b {
                         break;
                     }
-                }
-                else {
+                } else {
                     if child_node.score < score {
                         score = child_node.score;
                         best_action_index = i;

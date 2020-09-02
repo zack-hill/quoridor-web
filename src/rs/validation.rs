@@ -10,8 +10,7 @@ pub fn validate_action(board_state: &BoardState, player_index: usize, action: &A
         if !get_valid_move_positions(board_state, player_index).contains(&action.position) {
             return false;
         }
-    } 
-    else {
+    } else {
         // Player has enough walls
         if board_state.get_player_wall_count(player_index) == 0 {
             return false;
@@ -45,17 +44,21 @@ pub fn is_wall_overlapping(board_state: &BoardState, position: Vector2<isize>, o
         return true;
     }
 
-    let shift_amount = if orientation == WallOrientation::Horizontal {Vector2::new(1, 0)} else {Vector2::new(0, 1)};
+    let shift_amount = if orientation == WallOrientation::Horizontal {
+        Vector2::new(1, 0)
+    } else {
+        Vector2::new(0, 1)
+    };
 
-    // Wall is not directly next to another wall of the same orientation    
+    // Wall is not directly next to another wall of the same orientation
     let point_a = position + shift_amount;
-    if BoardState::is_wall_index_in_bounds(point_a) && board_state.get_wall(point_a) == orientation {                
+    if BoardState::is_wall_index_in_bounds(point_a) && board_state.get_wall(point_a) == orientation {
         return true;
     }
 
-    // Wall is not directly next to another wall of the same orientation    
+    // Wall is not directly next to another wall of the same orientation
     let point_b = position - shift_amount;
-    if BoardState::is_wall_index_in_bounds(point_b) && board_state.get_wall(point_b) == orientation {                
+    if BoardState::is_wall_index_in_bounds(point_b) && board_state.get_wall(point_b) == orientation {
         return true;
     }
 
@@ -80,7 +83,11 @@ pub fn get_accessible_adjacent_cells(board_state: &BoardState, cell: Vector2<isi
     return cells;
 }
 
-pub fn get_accessible_cells(board_state: &BoardState, player_pos: Vector2<isize>, opponent_pos: Vector2<isize>) -> Vec<Vector2<isize>> {
+pub fn get_accessible_cells(
+    board_state: &BoardState,
+    player_pos: Vector2<isize>,
+    opponent_pos: Vector2<isize>,
+) -> Vec<Vector2<isize>> {
     let mut cells = Vec::new();
     for position in get_accessible_adjacent_cells(board_state, player_pos) {
         if position == opponent_pos {
@@ -89,8 +96,7 @@ pub fn get_accessible_cells(board_state: &BoardState, player_pos: Vector2<isize>
                     cells.push(jump_pos);
                 }
             }
-        } 
-        else {
+        } else {
             cells.push(position);
         }
     }
@@ -121,7 +127,11 @@ pub fn get_valid_block_actions(board_state: &BoardState, player_index: usize) ->
                 // For each orientation
                 for o in 0..2 {
                     // If this is a valid place to put a wall.
-                    let orientation = if o == 0 {WallOrientation::Vertical} else {WallOrientation::Horizontal};
+                    let orientation = if o == 0 {
+                        WallOrientation::Vertical
+                    } else {
+                        WallOrientation::Horizontal
+                    };
                     if !is_wall_overlapping(&board_state, pos, orientation) {
                         actions.push(Action::create_block(pos, orientation));
                     }
@@ -135,7 +145,6 @@ pub fn get_valid_block_actions(board_state: &BoardState, player_index: usize) ->
 #[cfg(test)]
 mod tests {
     use super::*;
-    
     #[test]
     fn player_1_is_trapped() {
         let mut board_state = BoardState::new();
@@ -146,7 +155,6 @@ mod tests {
         assert_eq!(true, is_player_trapped(&board_state, 0));
         assert_eq!(true, is_either_player_trapped(&board_state));
     }
-    
     #[test]
     fn player_2_is_trapped() {
         let mut board_state = BoardState::new();

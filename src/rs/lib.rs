@@ -13,8 +13,8 @@ use crate::board_state::BoardState;
 use crate::minimax_player::MinimaxPlayer;
 use crate::random_player::RandomPlayer;
 use crate::shortest_path_player::ShortestPathPlayer;
-use crate::vector2::Vector2;
 use crate::validation::*;
+use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
 use std::sync::Mutex;
@@ -32,7 +32,7 @@ lazy_static! {
 }
 
 #[wasm_bindgen]
-extern {
+extern "C" {
     fn alert(s: &str);
 }
 
@@ -45,7 +45,7 @@ pub fn get_board() -> String {
 #[wasm_bindgen]
 pub fn is_game_over() -> bool {
     let board_state = &mut BOARD_STATE.lock().unwrap();
-    return board_state.get_player_distance(0) == 0 || board_state.get_player_distance(1) == 0
+    return board_state.get_player_distance(0) == 0 || board_state.get_player_distance(1) == 0;
 }
 
 #[wasm_bindgen]
@@ -97,7 +97,11 @@ pub fn apply_move_action(x: isize, y: isize, player_index: usize) -> String {
 
 #[wasm_bindgen]
 pub fn apply_block_action(x: isize, y: isize, orientation: usize, player_index: usize) -> String {
-    let wall_orientation = if orientation == 0 {WallOrientation::Horizontal} else {WallOrientation::Vertical};
+    let wall_orientation = if orientation == 0 {
+        WallOrientation::Horizontal
+    } else {
+        WallOrientation::Vertical
+    };
     let action = Action::create_block(Vector2::new(x, y), wall_orientation);
     let board_state = &mut BOARD_STATE.lock().unwrap();
     action.apply(board_state, player_index);

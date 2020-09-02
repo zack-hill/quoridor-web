@@ -12,6 +12,6 @@ impl fmt::Display for ActionType {
         match self {
             ActionType::Move => write!(f, "Move"),
             ActionType::Block => write!(f, "Block"),
-        }        
+        }
     }
 }

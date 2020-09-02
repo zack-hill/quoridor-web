@@ -4,21 +4,20 @@ use crate::validation::*;
 use crate::vector2::Vector2;
 use crate::wall_orientation::WallOrientation;
 
-use rand::{Rng};
+use rand::Rng;
 
-pub struct ShortestPathPlayer { }
+pub struct ShortestPathPlayer {}
 
 impl ShortestPathPlayer {
     pub fn take_action(board_state: &BoardState, player_index: usize, move_chance: f32) -> Action {
-        let mut rng = rand::thread_rng();       
-        loop { 
+        let mut rng = rand::thread_rng();
+        loop {
             if rng.gen::<f32>() < move_chance || board_state.get_player_wall_count(player_index) == 0 {
                 // Move along shortest path
                 let distance_matrix = board_state.get_distance_matrix(player_index);
                 let best_move = get_best_move(board_state, player_index, &distance_matrix);
                 return Action::create_move(best_move);
-            }
-            else {
+            } else {
                 // Block along opponent's shortest path
                 let opp_index = 1 - player_index;
                 let distance_matrix = board_state.get_distance_matrix(opp_index);
@@ -31,9 +30,13 @@ impl ShortestPathPlayer {
                     old_position = board_state.get_player_position(player_index);
                     direction = new_position - old_position;
                 }
-                let orientation = if direction.y == 0 {WallOrientation::Vertical} else {WallOrientation::Horizontal};
+                let orientation = if direction.y == 0 {
+                    WallOrientation::Vertical
+                } else {
+                    WallOrientation::Horizontal
+                };
                 let wall_points = get_wall_points(old_position, direction);
-                for i in 0..2  {
+                for i in 0..2 {
                     let action = Action::create_block(wall_points[i], orientation);
                     if validate_action(board_state, player_index, &action) {
                         return action;
@@ -43,7 +46,6 @@ impl ShortestPathPlayer {
         }
     }
 }
-    
 fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix: &[[isize; 9]; 9]) -> Vector2<isize> {
     let mut best_distance = -1;
     let mut best_move = Vector2::new(-1, -1);
@@ -58,19 +60,20 @@ fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix:
 }
 
 fn get_wall_points(cell: Vector2<isize>, direction: Vector2<isize>) -> [Vector2<isize>; 2] {
-    if direction.x == 1 // Right
+    if direction.x == 1
+    // Right
     {
         return [Vector2::new(cell.x, cell.y), Vector2::new(cell.x, cell.y - 1)];
-    }
-    else if direction.x == -1 // Left
+    } else if direction.x == -1
+    // Left
     {
         return [Vector2::new(cell.x - 1, cell.y - 1), Vector2::new(cell.x - 1, cell.y)];
-    }
-    else if direction.y == 1 // Up
+    } else if direction.y == 1
+    // Up
     {
         return [Vector2::new(cell.x, cell.y), Vector2::new(cell.x - 1, cell.y)];
-    }
-    else // Down
+    } else
+    // Down
     {
         return [Vector2::new(cell.x - 1, cell.y - 1), Vector2::new(cell.x, cell.y - 1)];
     }
