@@ -1,62 +1,66 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Linux - Debug",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--bin=quoridor",
-                    "--package=quoridor-rust"
-                ],
-                "filter": {
-                    "name": "quoridor-rust",
-                    "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "name": "Windows - Debug",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/target/debug/quoridor.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false
-        },
-        {
-            "name": "Windows - Release",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "preLaunchTask": "build-release",
-            "program": "${workspaceFolder}/target/release/quoridor.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false
-        },
-        {
-            "name": "Run Test Debugger",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/target/debug/quoridor_rust-ed26e39411fc2e75.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "preLaunchTask": "cargo test build",
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "OSX Debug",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/target/debug/quoridor",
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Linux - Debug",
+      "cargo": {
+        "args": ["build", "--bin=quoridor", "--package=quoridor-rust"],
+        "filter": {
+          "name": "quoridor-rust",
+          "kind": "bin"
         }
-    ]
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Windows - Debug",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/target/debug/quoridor.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false
+    },
+    {
+      "name": "Windows - Release",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "preLaunchTask": "build-release",
+      "program": "${workspaceFolder}/target/release/quoridor.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false
+    },
+    {
+      "name": "Run Test Debugger",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/target/debug/quoridor_rust-ed26e39411fc2e75.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": true,
+      "preLaunchTask": "cargo test build"
+    }
+  ]
 }
