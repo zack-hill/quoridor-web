@@ -1,7 +1,10 @@
 [package]
 name = "quoridor-rust"
 version = "0.1.0"
-authors = ["Zack Hill <zackary.t.hill@gmail.com>"]
+authors = [
+  "Zack Hill <zackary.t.hill@gmail.com>",
+  "Mark Tilton <mark.tilton.a@gmail.com>"
+]
 edition = "2018"
 
 [[bin]]
