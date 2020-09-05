@@ -7,7 +7,7 @@ pub fn validate_action(board_state: &BoardState, player_index: usize, action: &A
     match action {
         Action::Move(position) => get_valid_move_positions(board_state, player_index).contains(&position),
         Action::Block(position, orientation) => {
-            !board_state.get_player_wall_count(player_index) == 0
+            board_state.get_player_wall_count(player_index) != 0
                 && BoardState::is_wall_index_in_bounds(*position)
                 && !is_wall_overlapping(&board_state, *position, *orientation)
                 && !is_either_player_trapped(&board_state.from_action(&action, player_index))
@@ -32,7 +32,7 @@ pub fn is_wall_overlapping(board_state: &BoardState, position: Vector2<isize>, o
     if BoardState::is_wall_index_in_bounds(point_a) {
         if let Some(o) = board_state.get_wall(point_a) {
             if o == orientation {
-                return false;
+                return true;
             }
         }
     }
@@ -42,7 +42,7 @@ pub fn is_wall_overlapping(board_state: &BoardState, position: Vector2<isize>, o
     if BoardState::is_wall_index_in_bounds(point_b) {
         if let Some(o) = board_state.get_wall(point_b) {
             if o == orientation {
-                return false;
+                return true;
             }
         }
     }

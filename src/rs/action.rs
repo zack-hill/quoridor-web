@@ -16,6 +16,7 @@ impl Action {
             Action::Move(position) => board_state.set_player_position(player_index, *position),
             Action::Block(position, orientation) => {
                 board_state.set_wall(*position, *orientation);
+                board_state.set_player_wall(*position, player_index);
                 board_state.set_player_wall_count(player_index, board_state.get_player_wall_count(player_index) - 1);
             }
         };
@@ -54,7 +55,7 @@ mod tests {
         let mut board_state = BoardState::new();
         let action = Action::Block(wall_position, wall_orientation);
 
-        action.apply(&mut board_state, 0);
+        action.apply(&mut board_state, 1);
 
         assert_eq!(Some(wall_orientation), board_state.get_wall(wall_position));
         assert_eq!(
