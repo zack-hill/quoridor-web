@@ -156,9 +156,9 @@ function take_turn() {
     let boardState = JSON.parse(Quoridor.get_board());
     turns.push(boardState)
 
-    let formattedAction = (action.action_type == "Move") 
-        ? `${action.action_type} (${action.position.x}, ${action.position.y})`
-        : `${action.action_type} (${action.position.x}, ${action.position.y}) ${action.orientation}`;
+    let formattedAction = ("Move" in action) 
+        ? `Move (${action.Move.x}, ${action.Move.y})`
+        : `Block (${action.Block[0].x}, ${action.Block[0].y}) ${action.Block[1]}`;
     insertTurnRow(currentTurnNumber + 1, formattedAction);
 }
 
