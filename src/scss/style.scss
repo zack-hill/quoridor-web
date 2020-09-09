@@ -3,29 +3,21 @@ body {
 }
 
 select {
-  margin: 4px;
-  margin-left: 30px;
+  margin: 4px 0;
 }
 
 .container {
   margin: auto;
+  height: 100%;
+  width: 100%;
 }
 
-.left-column {
-  padding: 0;
+.right-column-wrapper {
+  padding: 20px;
   margin: 0;
-}
-
-.middle-column {
-  padding: 0;
-  margin: 0;
-  text-align: right;
-}
-
-.right-column {
-  padding: 0;
-  margin: 0;
-  height: 100vh;
+  max-width: 400px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .selected {
@@ -37,53 +29,47 @@ select {
   border-radius: 5px;
 }
 
+#right-column {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
 #controls-panel {
-  margin: 20px;
   padding: 10px;
 }
 
-#board {
-  margin: 20px 0;
-}
-
-#turns-wrapper-panel {
-  height: 90%;
+#board-wrapper {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
   -o-box-sizing: border-box;
   box-sizing: border-box;
   padding-left: 20px;
-  padding-right: 20px;
+  padding-top: 20px;
   padding-bottom: 20px;
+  max-width: calc(100vh - 90px);
+}
+
+#board {
+}
+
+#setup-panel {
+  margin-bottom: 20px;
 }
 
 #turns-panel {
-  display: inline-block;
-  overflow-y: auto;
-  height: 100%;
-  width: 100%;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-}
-
-#turns-panel {
-  tr {
-    display: inline-block;
-    width: 100%;
-  }
-
-  tbody {
-    display: inline-block;
-  }
+  display: flex;
+  flex-flow: column;
+  flex-grow: 1;
+  height: 0;
+  min-height: 200px;
 
   table {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     display: inline-block;
     overflow-y: auto;
-    margin: 0;
-    table-layout: fixed;
   }
 }
 
@@ -108,18 +94,15 @@ table td:last-child {
   width: 75px;
 }
 
-#turns-table-header-wrapper {
+#section-header-wrapper {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
   -o-box-sizing: border-box;
   box-sizing: border-box;
-  padding-left: 20px;
-  padding-top: 20px;
-  padding-right: 20px;
 }
 
-.table-header {
+.section-header {
   background-color: lightgray;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
@@ -172,8 +155,8 @@ table td:last-child {
 }
 
 .nav-button {
-  font-size: 20px;
-  width: 60px;
+  font-size: 16px;
+  width: 48px;
   margin: 2px;
   border-radius: 5px;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
@@ -181,6 +164,7 @@ table td:last-child {
 }
 
 #distance-meter-panel {
+  margin-top: 20px;
   padding: 15px;
   text-align: center;
 
