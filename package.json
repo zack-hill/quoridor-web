@@ -5,7 +5,7 @@
   "main": "src/index.html",
   "scripts": {
     "scss": "node-sass src/scss -o src/css",
-    "watch-scss": "node-sass --watch src/scss -o src/css",
+    "watch-scss": "node-sass --watch src/scss --output src/css",
     "build": "npm run scss & ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
