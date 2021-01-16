@@ -1,11 +1,11 @@
-mod action;
-mod board_state;
-mod minimax_player;
-mod random_player;
-mod shortest_path_player;
-mod validation;
-mod vector2;
-mod wall_orientation;
+pub mod action;
+pub mod board_state;
+pub mod minimax_player;
+pub mod random_player;
+pub mod shortest_path_player;
+pub mod validation;
+pub mod vector2;
+pub mod wall_orientation;
 
 use crate::action::Action;
 use crate::board_state::BoardState;
