@@ -5,6 +5,7 @@ use crate::wall_orientation::WallOrientation;
 
 type Position = Vector2<i8>;
 
+#[inline]
 pub fn validate_action(board_state: &BoardState, player_index: usize, action: &Action) -> bool {
     match action {
         Action::Move(position) => get_valid_move_positions(board_state, player_index).contains(&position),
@@ -17,6 +18,7 @@ pub fn validate_action(board_state: &BoardState, player_index: usize, action: &A
     }
 }
 
+#[inline]
 pub fn is_wall_overlapping(board_state: &BoardState, position: Position, orientation: WallOrientation) -> bool {
     // Wall is not on top of another wall
     if board_state.get_wall(position) != None {
@@ -52,14 +54,17 @@ pub fn is_wall_overlapping(board_state: &BoardState, position: Position, orienta
     return false;
 }
 
+#[inline]
 pub fn is_player_trapped(board_state: &BoardState, player_index: usize) -> bool {
     return board_state.get_player_distance(player_index) == -1;
 }
 
+#[inline]
 pub fn is_either_player_trapped(board_state: &BoardState) -> bool {
     return is_player_trapped(board_state, 0) || is_player_trapped(board_state, 1);
 }
 
+#[inline]
 pub fn get_accessible_adjacent_cells(board_state: &BoardState, cell: Position) -> Vec<Position> {
     let mut cells = Vec::new();
     for i in 0..4 {
@@ -70,6 +75,7 @@ pub fn get_accessible_adjacent_cells(board_state: &BoardState, cell: Position) -
     return cells;
 }
 
+#[inline]
 pub fn get_accessible_cells(board_state: &BoardState, player_pos: Position, opponent_pos: Position) -> Vec<Position> {
     let mut cells = Vec::new();
     for position in get_accessible_adjacent_cells(board_state, player_pos) {
@@ -86,12 +92,14 @@ pub fn get_accessible_cells(board_state: &BoardState, player_pos: Position, oppo
     return cells;
 }
 
+#[inline]
 pub fn get_valid_move_positions(board_state: &BoardState, player_index: usize) -> Vec<Position> {
     let player_position = board_state.get_player_position(player_index);
     let opponent_position = board_state.get_player_position(1 - player_index);
     return get_accessible_cells(board_state, player_position, opponent_position);
 }
 
+#[inline]
 pub fn get_valid_move_actions(board_state: &BoardState, player_index: usize) -> Vec<Action> {
     return get_valid_move_positions(board_state, player_index)
         .into_iter()
@@ -99,6 +107,7 @@ pub fn get_valid_move_actions(board_state: &BoardState, player_index: usize) -> 
         .collect();
 }
 
+#[inline]
 pub fn get_valid_block_actions(board_state: &BoardState, player_index: usize) -> Vec<Action> {
     let mut actions = Vec::new();
     if board_state.get_player_wall_count(player_index) > 0 {
