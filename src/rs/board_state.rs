@@ -5,12 +5,14 @@ use crate::wall_orientation::WallOrientation;
 use serde::Serialize;
 use std::collections::VecDeque;
 
+pub type Position = Vector2<i8>;
+
 const RIGHT: usize = 0;
 const UP: usize = 1;
 const LEFT: usize = 2;
 const DOWN: usize = 3;
 lazy_static! {
-    pub static ref DIRECTIONS: [Vector2<isize>; 4] = [
+    pub static ref DIRECTIONS: [Position; 4] = [
         Vector2::new(1, 0),
         Vector2::new(0, 1),
         Vector2::new(-1, 0),
@@ -21,22 +23,22 @@ lazy_static! {
 #[derive(Copy, Clone, Serialize)]
 pub struct BoardState {
     pub walls: [[Option<WallOrientation>; 8]; 8],
+    pub distance_matrices: [[[i8; 9]; 9]; 2],
     pub cell_connections: [[[bool; 4]; 9]; 9],
-    pub player_positions: [Vector2<isize>; 2],
-    pub player_wall_counts: [usize; 2],
-    pub player_walls: [[isize; 8]; 8],
-    pub distance_matrices: [[[isize; 9]; 9]; 2],
+    pub player_positions: [Position; 2],
+    pub player_wall_counts: [u8; 2],
+    pub player_walls: [[i8; 8]; 8],
 }
 
 impl BoardState {
     pub fn new() -> Self {
         let mut board_state = BoardState {
             walls: [[None; 8]; 8],
+            distance_matrices: [[[-1; 9]; 9]; 2],
             cell_connections: [[[true; 4]; 9]; 9],
             player_positions: [Vector2::new(4, 0), Vector2::new(4, 8)],
             player_wall_counts: [10; 2],
             player_walls: [[-1; 8]; 8],
-            distance_matrices: [[[-1; 9]; 9]; 2],
         };
         for x in 0..9 {
             // Block the up direction for the top row.
@@ -61,11 +63,11 @@ impl BoardState {
         return copy;
     }
 
-    pub fn get_wall(&self, position: Vector2<isize>) -> Option<WallOrientation> {
+    pub fn get_wall(&self, position: Position) -> Option<WallOrientation> {
         self.walls[position.x as usize][position.y as usize]
     }
 
-    pub fn set_wall(&mut self, position: Vector2<isize>, value: WallOrientation) {
+    pub fn set_wall(&mut self, position: Position, value: WallOrientation) {
         let x = position.x as usize;
         let y = position.y as usize;
         self.walls[x][y] = Some(value);
@@ -80,56 +82,57 @@ impl BoardState {
             self.cell_connections[x][y + 1][RIGHT] = false;
             self.cell_connections[x + 1][y + 1][LEFT] = false;
         }
+        // self.distance_matrices[0] = self.calculate_distance_matrix(8);
+        // self.distance_matrices[1] = self.calculate_distance_matrix(0);
         self.update_distance_matrix(0, position);
         self.update_distance_matrix(1, position);
     }
 
-    pub fn set_player_wall(&mut self, position: Vector2<isize>, player_index: usize) {
-        self.player_walls[position.x as usize][position.y as usize] = player_index as isize;
+    pub fn set_player_wall(&mut self, position: Position, player_index: usize) {
+        self.player_walls[position.x as usize][position.y as usize] = player_index as i8;
     }
 
-    pub fn get_player_position(&self, player_index: usize) -> Vector2<isize> {
+    pub fn get_player_position(&self, player_index: usize) -> Position {
         return self.player_positions[player_index];
     }
 
-    pub fn set_player_position(&mut self, player_index: usize, position: Vector2<isize>) {
+    pub fn set_player_position(&mut self, player_index: usize, position: Position) {
         self.player_positions[player_index] = position;
     }
 
-    pub fn get_player_wall_count(&self, player_index: usize) -> usize {
+    pub fn get_player_wall_count(&self, player_index: usize) -> u8 {
         return self.player_wall_counts[player_index];
     }
 
-    pub fn set_player_wall_count(&mut self, player_index: usize, value: usize) {
+    pub fn set_player_wall_count(&mut self, player_index: usize, value: u8) {
         self.player_wall_counts[player_index] = value;
     }
 
-    pub fn is_wall_index_in_bounds(wall: Vector2<isize>) -> bool {
+    pub fn is_wall_index_in_bounds(wall: Position) -> bool {
         return wall.x >= 0 && wall.y >= 0 && wall.x < 8 && wall.y < 8;
     }
 
-    pub fn is_cell_index_in_bounds(cell: Vector2<isize>) -> bool {
+    pub fn is_cell_index_in_bounds(cell: Position) -> bool {
         return cell.x >= 0 && cell.y >= 0 && cell.x < 9 && cell.y < 9;
     }
 
-    pub fn get_player_distance(&self, player_index: usize) -> isize {
+    pub fn get_player_distance(&self, player_index: usize) -> i8 {
         let player_position = self.get_player_position(player_index);
         return self.get_distance_matrix(player_index)[player_position.x as usize][player_position.y as usize];
     }
 
-    pub fn get_distance_matrix(&self, player_index: usize) -> [[isize; 9]; 9] {
+    pub fn get_distance_matrix(&self, player_index: usize) -> [[i8; 9]; 9] {
         return self.distance_matrices[player_index];
     }
 
-    fn calculate_distance_matrix(&self, row: usize) -> [[isize; 9]; 9] {
+    fn calculate_distance_matrix(&self, row: usize) -> [[i8; 9]; 9] {
         let mut matrix = [[-1; 9]; 9];
-        let mut queue: VecDeque<Vector2<isize>> = VecDeque::new();
+        let mut queue: VecDeque<Position> = VecDeque::new();
         for x in 0..9 {
             matrix[x][row] = 0;
-            queue.push_back(Vector2::new(x as isize, row as isize));
+            queue.push_back(Vector2::new(x as i8, row as i8));
         }
-        while !queue.is_empty() {
-            let cell = queue.pop_front().unwrap();
+        while let Some(cell) = queue.pop_front() {
             let distance = matrix[cell.x as usize][cell.y as usize];
             for i in 0..4 {
                 if self.cell_connections[cell.x as usize][cell.y as usize][i] {
@@ -145,14 +148,14 @@ impl BoardState {
         return matrix;
     }
 
-    fn update_distance_matrix(&mut self, player_index: usize, new_wall: Vector2<isize>) {
+    fn update_distance_matrix(&mut self, player_index: usize, new_wall: Position) {
         // Cells are added to the downstream queue that are found to be potentially affected
         // by the new wall placement.
-        let mut downstream: VecDeque<Vector2<isize>> = VecDeque::new();
+        let mut downstream: VecDeque<Position> = VecDeque::new();
         // Cells are added to the upstream queue that are adjacent to cells that have been added
         // to the downstream queue. These are later used to refill the distance values once all
         // downstream cells have been identified.
-        let mut upstream: VecDeque<Vector2<isize>> = VecDeque::new();
+        let mut upstream: VecDeque<Position> = VecDeque::new();
 
         // Create vectors for the four potentially affected cells.
         let bottom_left = Vector2::new(new_wall.x, new_wall.y);
@@ -162,8 +165,7 @@ impl BoardState {
 
         // Get the distances for each of the potentially affected cells.
         let bottom_left_distance = self.distance_matrices[player_index][bottom_left.x as usize][bottom_left.y as usize];
-        let bottom_right_distance =
-            self.distance_matrices[player_index][bottom_right.x as usize][bottom_right.y as usize];
+        let bottom_right_distance = self.distance_matrices[player_index][bottom_right.x as usize][bottom_right.y as usize];
         let top_left_distance = self.distance_matrices[player_index][top_left.x as usize][top_left.y as usize];
         let top_right_distance = self.distance_matrices[player_index][top_right.x as usize][top_right.y as usize];
 
@@ -171,39 +173,43 @@ impl BoardState {
         // cells across the wall from one another. If the distances are the same, the wall placement will not affect
         // their values. If the cells have different distance values, the cell with the larger value will potentially
         // be affected by the wall and it is added to the downstream queue.
-        let wall_orientation = self.get_wall(new_wall);
-        if wall_orientation == Some(WallOrientation::Horizontal) {
-            // Left
-            if bottom_left_distance > top_left_distance {
-                downstream.push_back(bottom_left);
-            } else if top_left_distance > bottom_left_distance {
-                downstream.push_back(top_left);
+        let orientation = self
+            .get_wall(new_wall)
+            .expect("new_wall argument must be the position of a wall.");
+        match orientation {
+            WallOrientation::Horizontal => {
+                // Left
+                if bottom_left_distance > top_left_distance {
+                    downstream.push_back(bottom_left);
+                } else if top_left_distance > bottom_left_distance {
+                    downstream.push_back(top_left);
+                }
+                // Right
+                if bottom_right_distance > top_right_distance {
+                    downstream.push_back(bottom_right);
+                } else if top_right_distance > bottom_right_distance {
+                    downstream.push_back(top_right);
+                }
             }
-            // Right
-            if bottom_right_distance > top_right_distance {
-                downstream.push_back(bottom_right);
-            } else if top_right_distance > bottom_right_distance {
-                downstream.push_back(top_right);
-            }
-        } else if wall_orientation == Some(WallOrientation::Vertical) {
-            // Top
-            if top_left_distance > top_right_distance {
-                downstream.push_back(top_left);
-            } else if top_right_distance > top_left_distance {
-                downstream.push_back(top_right);
-            }
-            // Bottom
-            if bottom_left_distance > bottom_right_distance {
-                downstream.push_back(bottom_left);
-            } else if bottom_right_distance > bottom_left_distance {
-                downstream.push_back(bottom_right);
+            WallOrientation::Vertical => {
+                // Top
+                if top_left_distance > top_right_distance {
+                    downstream.push_back(top_left);
+                } else if top_right_distance > top_left_distance {
+                    downstream.push_back(top_right);
+                }
+                // Bottom
+                if bottom_left_distance > bottom_right_distance {
+                    downstream.push_back(bottom_left);
+                } else if bottom_right_distance > bottom_left_distance {
+                    downstream.push_back(bottom_right);
+                }
             }
         }
 
         // Using the initially potentially affected cells, if any, search for additional cells
         // that may need to be updated and clear the distance value for those cells as well.
-        while !downstream.is_empty() {
-            let cell = downstream.pop_front().unwrap();
+        while let Some(cell) = downstream.pop_front() {
             let distance = self.distance_matrices[player_index][cell.x as usize][cell.y as usize];
             // Cells with zero distance or ones already visited can be skipped.
             if distance == 0 || distance == -1 {
@@ -213,8 +219,7 @@ impl BoardState {
             for i in 0..4 {
                 if self.cell_connections[cell.x as usize][cell.y as usize][i] {
                     let adjacent_cell = cell + DIRECTIONS[i];
-                    let adjacent_distance =
-                        self.distance_matrices[player_index][adjacent_cell.x as usize][adjacent_cell.y as usize];
+                    let adjacent_distance = self.distance_matrices[player_index][adjacent_cell.x as usize][adjacent_cell.y as usize];
                     if adjacent_distance > distance {
                         // If the adjacent cell's distance is greater than the current one, it may be dependant on the current one.
                         downstream.push_back(adjacent_cell);
@@ -229,8 +234,7 @@ impl BoardState {
         // All potentially affected cells have now had their distance value reset. Now, using the
         // upstream queue (cells adjacent to the affected area), re-propagate distance values through
         // the matrix.
-        while !upstream.is_empty() {
-            let cell = upstream.pop_front().unwrap();
+        while let Some(cell) = upstream.pop_front() {
             let distance = self.distance_matrices[player_index][cell.x as usize][cell.y as usize];
             // Skip cells that were thought to be upstream, but ended up being downstream.
             if distance == -1 {
@@ -239,13 +243,11 @@ impl BoardState {
             for i in 0..4 {
                 if self.cell_connections[cell.x as usize][cell.y as usize][i] {
                     let adjacent_cell = cell + DIRECTIONS[i];
-                    let adjacent_cell_distance =
-                        self.distance_matrices[player_index][adjacent_cell.x as usize][adjacent_cell.y as usize];
+                    let adjacent_cell_distance = self.distance_matrices[player_index][adjacent_cell.x as usize][adjacent_cell.y as usize];
                     // Set the adjacent cell's distance value if it either doesn't have a distance value or if the value is greater
                     // than it would be had it been set from this cell.
                     if adjacent_cell_distance == -1 || adjacent_cell_distance > distance + 1 {
-                        self.distance_matrices[player_index][adjacent_cell.x as usize][adjacent_cell.y as usize] =
-                            distance + 1;
+                        self.distance_matrices[player_index][adjacent_cell.x as usize][adjacent_cell.y as usize] = distance + 1;
                         upstream.push_back(adjacent_cell);
                     }
                 }

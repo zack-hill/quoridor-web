@@ -87,7 +87,7 @@ pub fn get_valid_actions(player_index: usize) -> String {
 }
 
 #[wasm_bindgen]
-pub fn apply_move_action(x: isize, y: isize, player_index: usize) -> String {
+pub fn apply_move_action(x: i8, y: i8, player_index: usize) -> String {
     let action = Action::Move(Vector2::new(x, y));
     let board_state = &mut BOARD_STATE.lock().unwrap();
     action.apply(board_state, player_index);
@@ -95,7 +95,7 @@ pub fn apply_move_action(x: isize, y: isize, player_index: usize) -> String {
 }
 
 #[wasm_bindgen]
-pub fn apply_block_action(x: isize, y: isize, orientation: usize, player_index: usize) -> String {
+pub fn apply_block_action(x: i8, y: i8, orientation: usize, player_index: usize) -> String {
     let wall_orientation = if orientation == 0 {
         WallOrientation::Horizontal
     } else {

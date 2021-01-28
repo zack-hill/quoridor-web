@@ -6,6 +6,8 @@ use crate::wall_orientation::WallOrientation;
 
 use rand::Rng;
 
+pub type Position = Vector2<i8>;
+
 pub struct ShortestPathPlayer {}
 
 impl ShortestPathPlayer {
@@ -35,9 +37,9 @@ impl ShortestPathPlayer {
                 } else {
                     WallOrientation::Horizontal
                 };
-                let wall_points = get_wall_points(old_position, direction);
-                for i in 0..2 {
-                    let action = Action::Block(wall_points[i], orientation);
+
+                for &wall_point in get_wall_points(old_position, direction).iter() {
+                    let action = Action::Block(wall_point, orientation);
                     if validate_action(board_state, player_index, &action) {
                         return action;
                     }
@@ -47,7 +49,7 @@ impl ShortestPathPlayer {
     }
 }
 
-fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix: &[[isize; 9]; 9]) -> Vector2<isize> {
+fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix: &[[i8; 9]; 9]) -> Position {
     let mut best_distance = -1;
     let mut best_move = Vector2::new(-1, -1);
     for position in get_valid_move_positions(board_state, player_index) {
@@ -60,7 +62,7 @@ fn get_best_move(board_state: &BoardState, player_index: usize, distance_matrix:
     return best_move;
 }
 
-fn get_wall_points(cell: Vector2<isize>, direction: Vector2<isize>) -> [Vector2<isize>; 2] {
+fn get_wall_points(cell: Position, direction: Position) -> [Position; 2] {
     if direction.x == 1
     // Right
     {

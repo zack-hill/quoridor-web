@@ -6,8 +6,8 @@ use std::fmt;
 
 #[derive(Copy, Clone, Serialize)]
 pub enum Action {
-    Move(Vector2<isize>),
-    Block(Vector2<isize>, WallOrientation),
+    Move(Vector2<i8>),
+    Block(Vector2<i8>, WallOrientation),
 }
 
 impl Action {

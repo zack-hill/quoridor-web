@@ -9,7 +9,7 @@ mod wall_orientation;
 
 use board_state::BoardState;
 use minimax_player::MinimaxPlayer;
-// use random_player::RandomPlayer;
+use random_player::RandomPlayer;
 use shortest_path_player::ShortestPathPlayer;
 
 #[macro_use]
@@ -34,9 +34,11 @@ fn main() {
             let action = if player_index == 0 {
                 MinimaxPlayer::take_action(&board_state, player_index, 3)
             //ShortestPathPlayer::take_action(&board_state, player_index, 0.5)
+            // RandomPlayer::take_action(&board_state, player_index, 0.5)
             } else {
                 //MinimaxPlayer::take_action(&board_state, player_index, 3)
                 ShortestPathPlayer::take_action(&board_state, player_index, 0.5)
+                // RandomPlayer::take_action(&board_state, player_index, 0.5)
             };
             action.apply(&mut board_state, player_index);
             turn_count += 1;
@@ -50,13 +52,13 @@ fn main() {
         }
         total_turn_count += turn_count;
 
-        if i % 1 == 0 {
-            println!(
-                "Completed {} ({:.1}%) Games",
-                i + 1,
-                (i + 1) as f32 / game_count as f32 * 100.0
-            );
-        }
+        // if i % 1000 == 0 {
+        //     println!(
+        //         "Completed {} ({:.1}%) Games",
+        //         i + 1,
+        //         (i + 1) as f32 / game_count as f32 * 100.0
+        //     );
+        // }
     }
     let duration = start.elapsed().as_secs_f32();
     let games_per_sec = game_count as f32 / duration;
